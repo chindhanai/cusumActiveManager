@@ -11,10 +11,10 @@ results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500",
 #Plot of log-excess returns with annually moving average returns
 logER_plot = barplot(100*results$Logarithmic_Excess_Returns, main = "Monthly Excess Returns",
                      xlab = "", ylab = "%", col=4, las=1)
-lines(x = logER_plot, y = 100*results$Annually_Moving_Average, col=2, lwd=2)
+lines(x = logER_plot, y = 100*results$Annual_Moving_Average, col=2, lwd=2)
 
 #Plot of tracking error
-plot(100*as.zoo(sqrt(12)*results$Tracking_Errors), main="Annualized Tracking Error", type = 'l', las=0,
+plot(100*as.zoo(sqrt(12)*results$Tracking_Error), main="Annualized Tracking Error", type = 'l', las=0,
      xlab = "", ylab = "%", col=4, las=2)
 
 #Plot of IR
@@ -30,8 +30,8 @@ lines(coredata(results$Protractor[,4]), col="purple", lty = 2)
 lines(coredata(results$Protractor[,5]), col=3, lty = 4)
 lines(coredata(results$Protractor[,6]), col=3, lty = 3)
 lines(coredata(results$Protractor[,7]), col=3, lty = 1)
-legend(x = 70, y = 39, bty = 'n', legend = format(round(seq(-2.0,2.0,2/3), 2), nsmall = 2),
-       col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 0.5,
+legend("bottomright", bty = 'n', legend = format(round(seq(-2.0,2.0,2/3), 2), nsmall = 2),
+       col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 0.4,
        title = "Slopes on Protractor", ncol = 2)
 
 #Loglikeloihood Ratios
@@ -62,6 +62,7 @@ portRet = coredata(results$Means[,1])
 benchRet = coredata(results$Means[,2])
 Rob_lm = rlm(benchRet ~ portRet)
 Rob_lm$coefficients
+summary(Rob_lm)
 
 plot(portRet, benchRet, pch = 16, col = 4, main = "Scatter Plot
      Portfolio Returns and Benchmark Returns",

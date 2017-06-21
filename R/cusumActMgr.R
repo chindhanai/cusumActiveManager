@@ -22,105 +22,66 @@
 #' is lower than that of the Sharpe ratio and the Trynor ratio.
 #'
 #'
-#' \code{variable.selection="lars"} corresponds to least angle regression
-#' using \code{\link[lars]{lars}} with variants "lasso" (default), "lar",
-#' "stepwise" or "forward.stagewise". Note: If \code{variable.selection="lars"},
-#' \code{fit.method} will be ignored.
+#' \subsection{Data Processing}
 #'
-#' Argument \code{mkt.name} can be used to add market-timing factors to any of
-#' the above methods. Please refer to \code{\link{fitTsfmMT}}, a wrapper to
-#' \code{fitTsfm} for details.
+#' @param portfolioName a character representing the name of the fund.
+#' It is a required argument with no default
+#' @param benchmarkName a character representing the name of the benchamark
+#' It is a required argument with no default
+#' @param data an xts object containing the columns \code{portfolioName} and
+#' \code{benchmarkName} of monthly returns. This argument is required with no default.
+#' @param upperIR a numeric value representing the information ratio of a
+#' good performance. The default is set to 0.5
+#' @param lowerIR a numeric value representing the information ratio of a
+#' bad performance. The default is set to 0
+#' @param lambda_in the exponential weighting constant when the data
+#'  seems consistent with the current estimate of volatility.
+#' The default is set to 0.1
+#' @param lambda_out the exponential weighting constant when the data
+#' seems inconsistent with the current estimate of volatility.
+#' The default is set to 0.2
+#' @param winsorize the numeric value, greater than 1, of standard deviations
+#' at which we winsorize. The default is set to 4.
+#' @param filterStd the logical value representing the filter of the estimated
+#' standard deviations. The default is set to \code{FALSE}.
 #'
-#' \subsection{Data Processing}{
 #'
-#' Note about NAs: Before model fitting, incomplete cases are removed for
-#' every asset (return data combined with respective factors' return data)
-#' using \code{\link[stats]{na.omit}}. Otherwise, all observations in
-#' \code{data} are included.
-#'
-#' Note about \code{asset.names} and \code{factor.names}: Spaces in column
-#' names of \code{data} will be converted to periods as \code{fitTsfm} works
-#' with \code{xts} objects internally and colnames won't be left as they are.
-#' }
-#'
-#' @param asset.names vector of asset names, whose returns are the dependent
-#' variable in the factor model.
-#' @param factor.names vector containing names of the factors.
-#' @param mkt.name name of the column for market returns. Default is \code{NULL}.
-#' @param rf.name name of the column for the risk free rate; if excess returns
-#' should be calculated for all assets and factors. Default is \code{NULL}.
-#' @param data vector, matrix, data.frame, xts, timeSeries or zoo object
-#' containing the columns \code{asset.names}, \code{factor.names}, and
-#' optionally, \code{mkt.name} and \code{rf.name}.
-#' @param fit.method the estimation method, one of "LS", "DLS" or "Robust".
-#' See details. Default is "LS".
-#' @param variable.selection the variable selection method, one of "none",
-#' "stepwise","subsets","lars". See details. Default is "none".
-#' @param control list of control parameters. Refer to
-#' \code{\link{fitTsfm.control}} for details.
-#' @param ... arguments passed to \code{\link{fitTsfm.control}}
-#'
-#' @return \code{fitTsfm} returns an object of class \code{"tsfm"} for which
-#' \code{print}, \code{plot}, \code{predict} and \code{summary} methods exist.
-#'
-#' The generic accessor functions \code{coef}, \code{fitted} and
-#' \code{residuals} extract various useful features of the fit object.
-#' Additionally, \code{fmCov} computes the covariance matrix for asset returns
-#' based on the fitted factor model.
-#'
-#' An object of class \code{"tsfm"} is a list containing the following
-#' components:
-#' \item{asset.fit}{list of fitted objects for each asset. Each object is of
-#' class \code{lm} if \code{fit.method="LS" or "DLS"}, class \code{lmRob} if
-#' the \code{fit.method="Robust"}, or class \code{lars} if
-#' \code{variable.selection="lars"}.}
-#' \item{alpha}{N x 1 data.frame of estimated alphas.}
-#' \item{beta}{N x K data.frame of estimated betas.}
-#' \item{r2}{length-N vector of R-squared values.}
-#' \item{resid.sd}{length-N vector of residual standard deviations.}
-#' \item{fitted}{xts data object of fitted values; iff
-#' \code{variable.selection="lars"}}
-#' \item{call}{the matched function call.}
-#' \item{data}{xts data object containing the asset(s) and factor(s) returns.}
-#' \item{asset.names}{asset.names as input.}
-#' \item{factor.names}{factor.names as input.}
-#' \item{mkt.name}{mkt.name as input}
-#' \item{fit.method}{fit.method as input.}
-#' \item{variable.selection}{variable.selection as input.}
-#' Where N is the number of assets, K is the number of factors and T is the
-#' number of time periods.
+#' @return \code{cusumActMgr} returns a \code{list} containing the following xts objects:
+#' \item{Logarithmic_Excess_Returns}{Logarithmic excess returns of
+#' the fund relative to the benchmark}
+#' \item{Annual_Moving_Average}{The vector of annual moving average returns}
+#' \item{Tracking_Error}{The monthly tracking error of the logarithmic excess returns}
+#' \item{Information_Ratios}{The vector of monthly information ratios}
+#' \item{Lindley's_Recursion}{The vector  Lindley's recursion with a reset after the detection threshold (6.81) is passed.}
+#' \item{Annualized_Cusum_IR}{The vector annualized CUSUM of the information ratios}
+#' \item{Means}{The xts matrix of estimated means of the fund in the first columns,
+#' the benchmark in the second column, and the excess logarithmic returns in the third column}
+#' \item{Standard_deviations}{The xts matrix of estimated standard deviations of the fund in the first columns,
+#' the benchmark in the second column, and the excess logarithmic returns in the third column.
+#' It will not be filtered unless \code{filterStd = TRUE} is specified.}
+#' \item{Protractor}{The xts matrix of the rays from IR = -3 in the first column
+#' to IR = 3 in the seventh column used in the CUSUM IR as a protractor.}
+#' \item{Excess_Volatility}{The annualized Standard deviations}
 #'
 #' @author Chindhanai Uthaisaad.
 #'
 #' @references
-#' Christopherson, J. A., Carino, D. R., & Ferson, W. E. (2009). Portfolio
-#' performance measurement and benchmarking. McGraw Hill Professional.
-#'
-#' Efron, B., Hastie, T., Johnstone, I., & Tibshirani, R. (2004). Least angle
-#' regression. The Annals of statistics, 32(2), 407-499.
-#'
-#' Hastie, T., Tibshirani, R., Friedman, J., Hastie, T., Friedman, J., &
-#' Tibshirani, R. (2009). The elements of statistical learning (Vol. 2, No. 1).
-#' New York: Springer.
-#'
-#' @seealso The \code{tsfm} methods for generic functions:
-#' \code{\link{plot.tsfm}}, \code{\link{predict.tsfm}},
-#' \code{\link{print.tsfm}} and \code{\link{summary.tsfm}}.
-#'
-#' And, the following extractor functions: \code{\link[stats]{coef}},
-#' \code{\link[stats]{fitted}}, \code{\link[stats]{residuals}},
-#' \code{\link{fmCov}}, \code{\link{fmSdDecomp}}, \code{\link{fmVaRDecomp}}
-#' and \code{\link{fmEsDecomp}}.
-#'
-#' \code{\link{paFm}} for Performance Attribution.
+#' Philips, T. K., Yashchin, E. and Stein, D. M. (2003). “Using Statistical
+#' Process Control to Monitor Active Managers”, Journal of Portfolio Management,
+#' Fall 2003, pp. 86-94.
 #'
 #' @examples
 #' #Data Preprocessing
-#' LargeCap = read.csv("largecap.csv", header = T, sep = "," , stringsAsFactors = FALSE)
-#' LargeCap$DATE = as.yearmon(LargeCap$DATE, "%m/%d/%Y")
-#' LargeCap = as.xts(LargeCap[,-1], order.by = LargeCap$DATE)
-#' results = cusumActMgr(portfolioName = "ORCL", benchmarkName = "PG", data = LargeCap)
+#' Data = read.csv("Example1.csv", header = F, sep = "," , stringsAsFactors = FALSE)
+#' x = as.yearmon(2005 + seq(0, 107)/12)
+#' Data = Data[,-1]
+#' Data = Data[-length(Data[,1]),]
+#' colnames(Data) = c("Parvest", "RUS2500")
+#' Data = as.xts(Data, order.by = x)
+#' results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500", data = Data)
 #' @export
+
+############################< MAIN CODE >###############################
 
 # r = the logarithmic excess return in the current period
 # mu0 = the mean excess return from the last time period
@@ -164,7 +125,7 @@ sigmaEst = function(r, mu0, sigma0, win_level = 4, lambda_in = 0.1,
 
 cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
                       lowerIR = 0, lambda_in = 0.10, lambda_out = 0.20,
-                      winsorize = 4, filterStd = FALSE, ...) {
+                      winsorize = 4, filterStd = FALSE) {
 
   # record the call as an element to be returned
   this.call <- match.call()
@@ -322,8 +283,8 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
 
   #Return the updated likelihood ratios exceeding the threshold
   return(list("Logarithmic_Excess_Returns" = logExcessReturns,
-              "Annually_Moving_Average" = AMA,
-              "Tracking_Errors" = Stds[,3],
+              "Annual_Moving_Average" = AMA,
+              "Tracking_Error" = Stds[,3],
               "Information_Ratios" = IR,
               "Lindley's_Recursion" = LR,
               "Annualized_Cusum_IR" = annualizedIR,
