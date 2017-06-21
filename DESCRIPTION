@@ -1,0 +1,40 @@
+Package: factorAnalytics2
+Type: Package
+Title: Advancing factoranalytics
+Version: 1.0.0
+Author: Chindhanai Uthaisaad
+Maintainer: Chindhanai Uthaisaad <chindhanaipom@gmail.com>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
+Encoding: UTF-8
+Depends:
+    R (>= 3.3.0),
+    xts (>= 0.9),
+    foreach (>= 1.4),
+    rrcov (>= 1.3)
+Imports:
+    PerformanceAnalytics(>= 1.4),
+    quantmod,
+    zoo,
+    corrplot,
+    robustbase,
+    robust,
+    leaps,
+    lars,
+    strucchange,
+    lmtest,
+    sandwich,
+    lattice,
+    MASS,
+    sn,
+    boot,
+    parallel,
+    doSNOW,
+    RCurl,
+    bestglm,
+    tseries,
+	  HH,
+	  reshape2
+LazyData: true
+RoxygenNote: 6.0.1
