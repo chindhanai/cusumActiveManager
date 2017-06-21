@@ -164,7 +164,7 @@ sigmaEst = function(r, mu0, sigma0, win_level = 4, lambda_in = 0.1,
 
 cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
                       lowerIR = 0, lambda_in = 0.10, lambda_out = 0.20,
-                      winsorize = 4, ...) {
+                      winsorize = 4, filterStd = FALSE, ...) {
 
   # record the call as an element to be returned
   this.call <- match.call()
@@ -188,6 +188,10 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
 
   if(lambda_in < 0 || lambda_in >1 || lambda_out < 0 || lambda_out > 1){
     stop("Invalid args: the lambdas must be between 0 and 1")
+  }
+
+  if(!is.logical(filterStd)){
+    stop("Invalid args: filterStd must be a logical value")
   }
 
   #Obtain the return and benchmark
@@ -232,16 +236,21 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
     uStds[i+1,3] = sigmaEst(coredata(logExcessReturns[i]), Means[i+1,3], uStds[i,3], winsorize, lambda_in, lambda_out)
   }
 
-  #Filtering the standard deviations
-  for(i in 1:n){
-    fStds[i+1,1] = ifelse(uStds[i+1,1] > uStds[i,1], uStds[i+1,1], 0.5*(uStds[i,1]+uStds[i+1,1]))
-    fStds[i+1,2] = ifelse(uStds[i+1,2] > uStds[i,2], uStds[i+1,2], 0.5*(uStds[i,2]+uStds[i+1,2]))
-    fStds[i+1,3] = ifelse(uStds[i+1,3] > uStds[i,3], uStds[i+1,3], 0.5*(uStds[i,3]+uStds[i+1,3]))
+  Stds = uStds
+
+  if(filterStd){
+    #Filtering the standard deviations
+    for(i in 1:n){
+      fStds[i+1,1] = ifelse(uStds[i+1,1] > uStds[i,1], uStds[i+1,1], 0.5*(uStds[i,1]+uStds[i+1,1]))
+      fStds[i+1,2] = ifelse(uStds[i+1,2] > uStds[i,2], uStds[i+1,2], 0.5*(uStds[i,2]+uStds[i+1,2]))
+      fStds[i+1,3] = ifelse(uStds[i+1,3] > uStds[i,3], uStds[i+1,3], 0.5*(uStds[i,3]+uStds[i+1,3]))
+    }
+    Stds = fStds
   }
 
   Means = xts(Means, order.by = index_TE)
-  uStds = xts(uStds, order.by = index_TE)
-  fStds = xts(fStds, order.by = index_TE)
+  Stds = xts(uStds, order.by = index_TE)
+  colnames(Means) = colnames(Stds) = c("Fund", "Benchmark", "Excess")
 
   #Excess volatility
   Vol = matrix(0, ncol = 3, nrow = n+1)
@@ -249,7 +258,7 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
   Vol[1,2] = sqrt(12)*sd(coredata(benchmarkReturns))
 
   for(i in 1:n){
-    Vol[i+1,] = fStds[i+1,]*sqrt(12)
+    Vol[i+1,] = Stds[i+1,]*sqrt(12)
   }
 
   Vol[,3] = Vol[,1]-Vol[,2]
@@ -263,7 +272,7 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
   for(i in 1:length(portfolioReturns)){
 
     #Monthly estimate of IR
-    IR[i] = coredata(logExcessReturns[i]) / coredata(fStds[i,3])
+    IR[i] = coredata(logExcessReturns[i]) / coredata(Stds[i,3])
 
     #Lindley's recursion (Log-likelihood ratios)
     LR[i+1] = ifelse(coredata(LR[i])-coredata(IR[i])+avgIRLevel < 0, 0, ifelse(coredata(LR[i])>6.81, max(0,avgIRLevel-IR[i]), coredata(LR[i])-coredata(IR[i])+avgIRLevel))
@@ -314,14 +323,13 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
   #Return the updated likelihood ratios exceeding the threshold
   return(list("Logarithmic_Excess_Returns" = logExcessReturns,
               "Annually_Moving_Average" = AMA,
-              "Tracking_Errors" = fStds[,3],
+              "Tracking_Errors" = Stds[,3],
               "Information_Ratios" = IR,
               "Lindley's_Recursion" = LR,
               "Annualized_Cusum_IR" = annualizedIR,
               "Means" = Means,
               "Protractor" = Rays,
-              "Filtered_Standard_Deviations" = fStds,
-              "Unfiltered_Standard_Deviations" = uStds,
+              "Standard_Deviations" = Stds,
               "Excess_Volatility" = Vol))
 }
 
