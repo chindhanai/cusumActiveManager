@@ -222,17 +222,13 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
   uStds[1,3] = fStds[1,3] = ifelse(n>=6, 1.25 * median(abs(logExcessReturns[1:6])), 1.25 * median(abs(logExcessReturns)))
 
 
-  #Update the means for the fund and benchmark
+  #Update the means and unfiltered standard deviations for the fund and benchmark
   for(i in 1:n){
     Means[i+1,1] = muEst(coredata(portfolioReturns[i]), Means[i,1], uStds[i,1], winsorize, lambda_in)
-    Means[i+1,2] = muEst(coredata(benchmarkReturns[i]), Means[i,2], uStds[i,2], winsorize, lambda_in)
-    Means[i+1,3] = muEst(coredata(logExcessReturns[i]), Means[i,3], uStds[i,3], winsorize, lambda_in)
-  }
-
-  #Update the unfiltered standard deviations for the fund and benchmark
-  for(i in 1:n){
     uStds[i+1,1] = sigmaEst(coredata(portfolioReturns[i]), Means[i+1,1], uStds[i,1], winsorize, lambda_in, lambda_out)
+    Means[i+1,2] = muEst(coredata(benchmarkReturns[i]), Means[i,2], uStds[i,2], winsorize, lambda_in)
     uStds[i+1,2] = sigmaEst(coredata(benchmarkReturns[i]), Means[i+1,2], uStds[i,2], winsorize, lambda_in, lambda_out)
+    Means[i+1,3] = muEst(coredata(logExcessReturns[i]), Means[i,3], uStds[i,3], winsorize, lambda_in)
     uStds[i+1,3] = sigmaEst(coredata(logExcessReturns[i]), Means[i+1,3], uStds[i,3], winsorize, lambda_in, lambda_out)
   }
 

@@ -43,15 +43,28 @@ abline(h = -5.08, col=6, lwd=2)
 abline(h = -5.72, col=7, lwd=2)
 abline(h = -6.29, col=3, lwd=2)
 abline(h = -6.81, col=2, lwd=2)
-text(as.yearmon('2005-09', "%Y-%m"), y = -2.0, "IR = .5/0/-.5", cex = 0.7)
-text(as.yearmon('2005-06', "%Y-%m"), y = -3.2, "24/16/11", cex = 0.7)
+text(as.yearmon('2005-07', "%Y-%m"), y = -2.0, "IR = .5/0/-.5", cex = 0.7)
+text(as.yearmon('2005-06', "%Y-%m"), y = -3.3, "24/16/11", cex = 0.7)
 text(as.yearmon('2005-06', "%Y-%m"), y = -4.2, "36/22/15", cex = 0.7)
 text(as.yearmon('2005-06', "%Y-%m"), y = -4.9, "48/27/18", cex = 0.7)
 text(as.yearmon('2005-06', "%Y-%m"), y = -5.6, "60/32/21", cex = 0.7)
-text(as.yearmon('2005-06', "%Y-%m"), y = -6.1, "72/37/23", cex = 0.7)
+text(as.yearmon('2005-06', "%Y-%m"), y = -6.2, "72/37/23", cex = 0.7)
 text(as.yearmon('2005-06', "%Y-%m"), y = -6.7, "84/41/25", cex = 0.7)
 
 #Excess volatility plot
 plot(as.zoo(100*results$Excess_Volatility[,3]),
      main = "Excess Volatility Relative to Benchmark", las=2, col=4,
-     ylab = "%")
+     xlab = "", ylab = "%")
+
+#Scatter plot with robust regression
+library(MASS)
+portRet = coredata(results$Means[,1])
+benchRet = coredata(results$Means[,2])
+Rob_lm = rlm(benchRet ~ portRet)
+Rob_lm$coefficients
+
+plot(portRet, benchRet, pch = 16, col = 4, main = "Scatter Plot
+     Portfolio Returns and Benchmark Returns",
+     xlab = "Portfolio Returns", ylab = "Benchmark Returns", las=1)
+abline(Rob_lm, col=2)
+legend(x = 0, y=-0.03, legend = "y = -0.0006461229 + 0.9123706622 x", cex = 0.7)
