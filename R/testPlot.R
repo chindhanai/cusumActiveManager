@@ -1,4 +1,5 @@
 library(xts)
+library(MASS)
 Data = read.csv("Example1.csv", header = F, sep = "," , stringsAsFactors = FALSE)
 x = as.yearmon(2005 + seq(0, 107)/12)
 Data = Data[,-1]
@@ -8,6 +9,7 @@ Data = as.xts(Data, order.by = x)
 results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500",
                       data = Data)
 
+pdf("myOutPut.pdf")
 #Plot of log-excess returns with annually moving average returns
 logER_plot = barplot(100*results$Logarithmic_Excess_Returns, main = "Monthly Excess Returns",
                      xlab = "", ylab = "%", col=4, las=1)
@@ -21,35 +23,36 @@ plot(100*as.zoo(sqrt(12)*results$Tracking_Error), main="Annualized Tracking Erro
 barplot(results$Information_Ratios, main="Information Ratios", col=4, las=1)
 
 #cusumIR
-plot(as.zoo(results$Annualized_Cusum_IR), auto.grid=FALSE,
-     main="CUSUM Plot: Information Ratio", las=2, col=4, ylab = "")
-lines(coredata(results$Protractor[,1]), col=2, lty = 1)
-lines(coredata(results$Protractor[,2]), col=2, lty = 3)
-lines(coredata(results$Protractor[,3]), col=2, lty = 4)
-lines(coredata(results$Protractor[,4]), col="purple", lty = 2)
-lines(coredata(results$Protractor[,5]), col=3, lty = 4)
-lines(coredata(results$Protractor[,6]), col=3, lty = 3)
-lines(coredata(results$Protractor[,7]), col=3, lty = 1)
+plot(as.zoo(results$Annualized_Cusum_IR),
+     main="CUSUM Plot: Information Ratio", las=2, col=4, ylab = "", yaxt='n')
+lines(coredata(results$Protractor_IR[,1]), col=2, lty = 1)
+lines(coredata(results$Protractor_IR[,2]), col=2, lty = 3)
+lines(coredata(results$Protractor_IR[,3]), col=2, lty = 4)
+lines(coredata(results$Protractor_IR[,4]), col="purple", lty = 2)
+lines(coredata(results$Protractor_IR[,5]), col=3, lty = 4)
+lines(coredata(results$Protractor_IR[,6]), col=3, lty = 3)
+lines(coredata(results$Protractor_IR[,7]), col=3, lty = 1)
 legend("bottomright", bty = 'n', legend = format(round(seq(-2.0,2.0,2/3), 2), nsmall = 2),
-       col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 0.4,
+       col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 1,
        title = "Slopes on Protractor", ncol = 2)
 
-#Loglikeloihood Ratios
-plot(as.zoo(-results$`Lindley's_Recursion`), auto.grid=FALSE,
+#Lindley's Recursion
+plot(as.zoo(-results$`Lindley's_Recursion`),
      main="Lindley's Recursion", las=2, col=4, ylab = "")
-abline(h = -3.41, col=8, lwd=2)
-abline(h = -4.33, col=5, lwd=2)
-abline(h = -5.08, col=6, lwd=2)
-abline(h = -5.72, col=7, lwd=2)
-abline(h = -6.29, col=3, lwd=2)
+abline(h = -3.41, col=3, lwd=2)
+abline(h = -4.33, col="green3", lwd=2)
+abline(h = -5.08, col=7, lwd=2)
+abline(h = -5.72, col="goldenrod1", lwd=2)
+abline(h = -6.29, col="orangered", lwd=2)
 abline(h = -6.81, col=2, lwd=2)
-text(as.yearmon('2005-07', "%Y-%m"), y = -2.0, "IR = .5/0/-.5", cex = 0.7)
-text(as.yearmon('2005-06', "%Y-%m"), y = -3.3, "24/16/11", cex = 0.7)
-text(as.yearmon('2005-06', "%Y-%m"), y = -4.2, "36/22/15", cex = 0.7)
-text(as.yearmon('2005-06', "%Y-%m"), y = -4.9, "48/27/18", cex = 0.7)
-text(as.yearmon('2005-06', "%Y-%m"), y = -5.6, "60/32/21", cex = 0.7)
-text(as.yearmon('2005-06', "%Y-%m"), y = -6.2, "72/37/23", cex = 0.7)
-text(as.yearmon('2005-06', "%Y-%m"), y = -6.7, "84/41/25", cex = 0.7)
+text(as.yearmon('2005-06', "%Y-%m"), y = -2.0, "Avg. Crossing Time", cex = 0.7)
+text(as.yearmon('2005-06', "%Y-%m"), y = -2.5, "IR = 0.5 | IR = 0", cex = 0.7)
+text(as.yearmon('2005-06', "%Y-%m"), y = -3.3, "24 | 16", cex = 0.89)
+text(as.yearmon('2005-06', "%Y-%m"), y = -4.2, "36 | 22", cex = 0.89)
+text(as.yearmon('2005-06', "%Y-%m"), y = -4.9, "48 | 27", cex = 0.89)
+text(as.yearmon('2005-06', "%Y-%m"), y = -5.6, "60 | 32", cex = 0.89)
+text(as.yearmon('2005-06', "%Y-%m"), y = -6.2, "72 | 37", cex = 0.89)
+text(as.yearmon('2005-06', "%Y-%m"), y = -6.7, "84 | 41", cex = 0.89)
 
 #Excess volatility plot
 plot(as.zoo(100*results$Excess_Volatility[,3]),
@@ -57,15 +60,30 @@ plot(as.zoo(100*results$Excess_Volatility[,3]),
      xlab = "", ylab = "%")
 
 #Scatter plot with robust regression
-library(MASS)
-portRet = coredata(results$Means[,1])
-benchRet = coredata(results$Means[,2])
+portRet = 100*coredata(results$Means[,1])
+benchRet = 100*coredata(results$Means[,2])
 Rob_lm = rlm(benchRet ~ portRet)
 Rob_lm$coefficients
 summary(Rob_lm)
 
 plot(portRet, benchRet, pch = 16, col = 4, main = "Scatter Plot
      Portfolio Returns and Benchmark Returns",
-     xlab = "Portfolio Returns", ylab = "Benchmark Returns", las=1)
+     xlab = "Portfolio Returns (%)", ylab = "Benchmark Returns (%)", las=1)
 abline(Rob_lm, col=2)
-legend(x = 0, y=-0.03, legend = "y = -0.0006461229 + 0.9123706622 x", cex = 0.7)
+abline(v=0, h=0)
+legend("bottomright", legend = c(expression(paste(alpha, "= -0.06461229%")), expression(paste(beta, "= 0.9123706622"))), cex = 0.7)
+
+#CUSUM for returns
+plot(as.zoo(results$Annualized_Cusum_ER),
+     main="CUSUM Plot: Excess Returns", las=2, col=4, ylab = "")
+lines(coredata(results$Protractor_ER[,1]), col=2, lty = 1)
+lines(coredata(results$Protractor_ER[,2]), col=2, lty = 3)
+lines(coredata(results$Protractor_ER[,3]), col=2, lty = 4)
+lines(coredata(results$Protractor_ER[,4]), col="purple", lty = 2)
+lines(coredata(results$Protractor_ER[,5]), col=3, lty = 4)
+lines(coredata(results$Protractor_ER[,6]), col=3, lty = 3)
+lines(coredata(results$Protractor_ER[,7]), col=3, lty = 1)
+legend("bottomright", bty = 'n', legend = format(round(seq(-2.0,2.0,2/3), 2), nsmall = 2),
+       col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 1,
+       title = "Slopes on Protractor", ncol = 2)
+dev.off()

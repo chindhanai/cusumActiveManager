@@ -83,11 +83,15 @@
 
 ############################< MAIN CODE >###############################
 
-# r = the logarithmic excess return in the current period
-# mu0 = the mean excess return from the last time period
-# sigma0 = the estimated volatility from the last time period.
+# This function is a simple weighted average of the current
+# return and the last time period excess return. The returned value
+# would be the current excess return used in the computation
+
+# r = a return in the current period
+# mu0 = a mean return from the last time period
+# sigma0 = an estimated volatility from the last time period.
 #          If it is not available (as for example in the first period,
-#          set it to 0, in which case, the mean
+#          set it to 0, in which case, the mean)
 # win_level = the number of standard deviations at which we winsorize
 #             (default: win_level =4)
 # lambda = the exponential weighting constant (default: lambda = 0.1)
@@ -98,6 +102,10 @@ muEst = function(r, mu0, sigma0, win_level = 4, lambda = 0.1){
   }
   return(lambda * r + (1 - lambda) * mu0)
 }
+
+# This function is a simple weighted average of the current
+# excess return and the last time period excess return. The returned value
+# would be the current excess return used in the computation
 
 # r = the logarithmic excess return in the current period
 # mu0 = the mean excess return from the last time period
@@ -118,7 +126,7 @@ muEst = function(r, mu0, sigma0, win_level = 4, lambda = 0.1){
 sigmaEst = function(r, mu0, sigma0, win_level = 4, lambda_in = 0.1,
                     lambda_out = 0.2){
 
-  lambda = ifelse( (sigma0/win_level < abs(r-mu0)) && (abs(r-mu0) < win_level*sigma0), lambda_in, lambda_out)
+  lambda = ifelse( (sigma0 < win_level*abs(r-mu0)) && (abs(r-mu0) < win_level*sigma0), lambda_in, lambda_out)
   return(sqrt(lambda * (r-mu0)^2 + (1 - lambda) * sigma0^2))
 }
 
@@ -160,16 +168,15 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
   benchmarkReturns = data[,benchmarkName]
   n = length(portfolioReturns)
 
-  if(n < 2){
+  if (n < 2) {
     stop("Invalid args: the portfolio returns and benchmark returns must be of length at least 2")
   }
 
-  if(n != length(benchmarkReturns)){
+  if (n != length(benchmarkReturns)) {
     stop("Invalid args: the portfolio returns and benchmark returns must be of the same length")
   }
 
   #Initialize logarithmic excess returns, IR, LLR and TE
-  IR = cusumIR = xts(rep(0, n), order.by = index(portfolioReturns))
   priorMonth = as.yearmon(first(index(portfolioReturns)))-1/12
   index_TE = c(priorMonth, index(portfolioReturns))
   LR = xts(rep(0,n+1), order.by = index_TE)
@@ -199,9 +206,9 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
 
   Stds = uStds
 
-  if(filterStd){
+  if (filterStd){
     #Filtering the standard deviations
-    for(i in 1:n){
+    for (i in 1:n){
       fStds[i+1,1] = ifelse(uStds[i+1,1] > uStds[i,1], uStds[i+1,1], 0.5*(uStds[i,1]+uStds[i+1,1]))
       fStds[i+1,2] = ifelse(uStds[i+1,2] > uStds[i,2], uStds[i+1,2], 0.5*(uStds[i,2]+uStds[i+1,2]))
       fStds[i+1,3] = ifelse(uStds[i+1,3] > uStds[i,3], uStds[i+1,3], 0.5*(uStds[i,3]+uStds[i+1,3]))
@@ -210,17 +217,14 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
   }
 
   Means = xts(Means, order.by = index_TE)
-  Stds = xts(uStds, order.by = index_TE)
+  Stds = xts(Stds, order.by = index_TE)
   colnames(Means) = colnames(Stds) = c("Fund", "Benchmark", "Excess")
 
   #Excess volatility
   Vol = matrix(0, ncol = 3, nrow = n+1)
   Vol[1,1] = sqrt(12)*sd(coredata(portfolioReturns))
   Vol[1,2] = sqrt(12)*sd(coredata(benchmarkReturns))
-
-  for(i in 1:n){
-    Vol[i+1,] = Stds[i+1,]*sqrt(12)
-  }
+  Vol[2:(n+1),] = Stds[2:(n+1),] * sqrt(12)
 
   Vol[,3] = Vol[,1]-Vol[,2]
   colnames(Vol) = c("FundVol", "BenchmarkVol", "ExcessVol")
@@ -230,11 +234,10 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
   avgIRLevel = 0.5*(upperIR + lowerIR)/sqrt(12)
 
   #####Begin looping through the new returns#####
-  for(i in 1:length(portfolioReturns)){
+  IR = coredata(logExcessReturns) / coredata(Stds[-(n+1),3])
+  IR = xts(IR, order.by = index(portfolioReturns))
 
-    #Monthly estimate of IR
-    IR[i] = coredata(logExcessReturns[i]) / coredata(Stds[i,3])
-
+  for (i in 1:length(portfolioReturns)) {
     #Lindley's recursion (Log-likelihood ratios)
     LR[i+1] = ifelse(coredata(LR[i])-coredata(IR[i])+avgIRLevel < 0, 0, ifelse(coredata(LR[i])>6.81, max(0,avgIRLevel-IR[i]), coredata(LR[i])-coredata(IR[i])+avgIRLevel))
   }
@@ -250,36 +253,73 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
 
   #Information obtained from annualized IR
   annualizedIR = sqrt(12)*coredata(cusumIR)
-  lowerLim = min(annualizedIR)
-  upperLim = max(annualizedIR)
-  spreadIR = upperLim - lowerLim
+  lowerLimIR = min(annualizedIR)
+  upperLimIR = max(annualizedIR)
+  spreadIR = upperLimIR - lowerLimIR
   avgIR = spreadIR/n
-  upperPos = which.max(annualizedIR)
-  lowerPos = which.min(annualizedIR)
-  medIR = lowerLim + 0.5*spreadIR
-  peakIR = spreadIR/(upperPos-lowerPos)
-  maxIR = 0.5 * ceiling(abs(peakIR)+abs(avgIR))
-  protractor_width = ceiling(0.9*spreadIR/(2*maxIR))
-  protractor_height = abs(protractor_width*maxIR)
+  upperPosIR = which.max(annualizedIR)
+  lowerPosIR = which.min(annualizedIR)
+  medIR = lowerLimIR + 0.5*spreadIR
+  peakIR = spreadIR / (upperPosIR - lowerPosIR)
+  maxIR = 0.5 * ceiling(abs(peakIR) + abs(avgIR))
+  protractor_widthIR = ceiling(0.9 * spreadIR / (2 * maxIR))
+  protractor_heightIR = abs(protractor_widthIR*maxIR)
 
   #Slopes -3 to 3
-  Rays = matrix(0, ncol = 7, nrow = n+1)
-  Rays[1,1] = medIR + protractor_height
+  RaysIR = matrix(0, ncol = 7, nrow = n+1)
+  RaysIR[1,1] = medIR + protractor_heightIR
   for(j in 2:7){
-    Rays[1,j] = Rays[1,1] - (j-1)*protractor_height/3
+    RaysIR[1,j] = RaysIR[1,1] - (j-1)*protractor_heightIR/3
   }
 
   for(i in 2:(n+1)){
     for(j in 1:4){
-      Rays[i,j] = max(Rays[i-1,j]-((Rays[1,j]-medIR)/protractor_width), medIR)
+      RaysIR[i,j] = max(RaysIR[i-1,j]-((RaysIR[1,j]-medIR)/protractor_widthIR), medIR)
     }
     for(j in 5:7){
-      Rays[i,j] = min(Rays[i-1,j]-((Rays[1,j]-medIR)/protractor_width), medIR)
+      RaysIR[i,j] = min(RaysIR[i-1,j]-((RaysIR[1,j]-medIR)/protractor_widthIR), medIR)
     }
   }
 
-  Rays = xts(Rays, order.by = index_TE)
-  colnames(Rays) = c("Ray-3", "Ray-2", "Ray-1", "Ray0", "Ray+1", "Ray+2", "Ray+3")
+  RaysIR = xts(RaysIR, order.by = index_TE)
+  colnames(RaysIR) = c("Ray-3", "Ray-2", "Ray-1", "Ray0", "Ray+1", "Ray+2", "Ray+3")
+
+  #CUSUM Excess Returns
+  cusumER = xts(100*cumsum(coredata(logExcessReturns)), order.by = index(logExcessReturns))
+
+  #Information obtained from annualized IR
+  annualizedER = 12*coredata(cusumER)
+  lowerLimER = min(annualizedER)
+  upperLimER = max(annualizedER)
+  spreadER = upperLimER - lowerLimER
+  avgER = spreadER/n
+  upperPosER = which.max(annualizedER)
+  lowerPosER = which.min(annualizedER)
+  medER = lowerLimER + 0.5*spreadER
+  peakER = spreadIR/(upperPosER - lowerPosER)
+  maxER = 0.5 * ceiling(abs(peakER)+abs(avgER))
+  protractor_widthER = ceiling(0.9*spreadER/(2*maxER))
+  protractor_heightER = abs(protractor_widthER*maxER)
+
+  #Slopes -3 to 3
+  RaysER = matrix(0, ncol = 7, nrow = n+1)
+  RaysER[1,1] = medER + protractor_heightER
+  for(j in 2:7){
+    RaysER[1,j] = RaysER[1,1] - (j-1)*protractor_heightER/3
+  }
+
+  for(i in 2:(n+1)){
+    for(j in 1:4){
+      RaysER[i,j] = max(RaysER[i-1,j]-((RaysER[1,j]-medER)/protractor_widthER), medER)
+    }
+    for(j in 5:7){
+      RaysER[i,j] = min(RaysER[i-1,j]-((RaysER[1,j]-medER)/protractor_widthER), medER)
+    }
+  }
+
+  RaysER = xts(RaysER, order.by = index_TE)
+  colnames(RaysER) = c("Ray-3", "Ray-2", "Ray-1", "Ray0", "Ray+1", "Ray+2", "Ray+3")
+
 
   #Return the updated likelihood ratios exceeding the threshold
   return(list("Logarithmic_Excess_Returns" = logExcessReturns,
@@ -288,8 +328,10 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
               "Information_Ratios" = IR,
               "Lindley's_Recursion" = LR,
               "Annualized_Cusum_IR" = annualizedIR,
+              "Annualized_Cusum_ER" = annualizedER,
               "Means" = Means,
-              "Protractor" = Rays,
+              "Protractor_IR" = RaysIR,
+              "Protractor_ER" = RaysER,
               "Standard_Deviations" = Stds,
               "Excess_Volatility" = Vol))
 }
