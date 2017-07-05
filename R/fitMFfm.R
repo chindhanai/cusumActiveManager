@@ -574,10 +574,10 @@ fitFfm <- function(data, asset.var, ret.var, date.var, exposure.vars,
     fac.names.indcty = lapply(seq(exposures.char), function(x)
       paste(levels(data[,exposures.char[x]]),sep=""))
     if(grepl("SECTOR", exposures.char[1])){
-      factor.names <- c("Market",unlist(fac.names.indcty),
+      factor.names <- c("Market", unlist(fac.names.indcty),
                         exposures.num)
-    }else{
-      factor.names <- c("Market", unlist((fac.names.indcty)[2]),unlist((fac.names.indcty)[1]),
+    } else {
+      factor.names <- c("Market", unlist((fac.names.indcty)[2]), unlist((fac.names.indcty)[1]),
                         exposures.num)
     }
     rownames(beta.mic) <- rep(asset.names, TP)

@@ -72,7 +72,7 @@
 #'
 #' @examples
 #' #Data Preprocessing
-#' Data = read.csv("Example1.csv", header = F, sep = "," , stringsAsFactors = FALSE)
+#' Data = data(cusumData)
 #' x = as.yearmon(2005 + seq(0, 107)/12)
 #' Data = Data[,-1]
 #' Data = Data[-length(Data[,1]),]
@@ -266,6 +266,17 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
   maxIR = 0.5 * ceiling(abs(peakIR) + abs(avgIR))
   protractor_widthIR = ceiling(0.9 * spreadIR / (2 * maxIR))
   protractor_heightIR = abs(protractor_widthIR*maxIR)
+  AIR = c("lowerLimIR" = lowerLimIR,
+          "upperLimIR" = upperLimIR,
+          "spreadIR" = spreadIR,
+          "avgIR" = avgIR,
+          "upperPosIR" = upperPosIR,
+          "lowerPosIR" = lowerPosIR,
+          "medIR" = medIR,
+          "peakIR" = peakIR,
+          "maxIR" = maxIR,
+          "protractor_widthIR" = protractor_widthIR,
+          "protractor_heightIR" = protractor_heightIR)
 
   #Slopes -3 to 3
   RaysIR = matrix(0, ncol = 7, nrow = n+1)
@@ -302,6 +313,17 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
   maxER = 0.5 * ceiling(abs(peakER) + abs(avgER))
   protractor_widthER = ceiling(0.9 * spreadER / (2 * maxER))
   protractor_heightER = abs(protractor_widthER * maxER)
+  AER = c("lowerLimER" = lowerLimER,
+          "upperLimER" = upperLimER,
+          "spreadER" = spreadER,
+          "avgER" = avgER,
+          "upperPosER" = upperPosER,
+          "lowerPosER" = lowerPosER,
+          "medER" = medER,
+          "peakER" = peakER,
+          "maxER" = maxER,
+          "protractor_widthER" = protractor_widthER,
+          "protractor_heightER" = protractor_heightER)
 
   #Slopes -3 to 3
   RaysER = matrix(0, ncol = 7, nrow = n+1)
@@ -324,7 +346,7 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
 
 
   #Return the updated likelihood ratios exceeding the threshold
-  return(list("Logarithmic_Excess_Returns" = logExcessReturns,
+  result = list("Logarithmic_Excess_Returns" = logExcessReturns,
               "Annual_Moving_Average" = AMA,
               "Tracking_Error" = Stds[,3],
               "Information_Ratios" = IR,
@@ -335,7 +357,11 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
               "Protractor_IR" = RaysIR,
               "Protractor_ER" = RaysER,
               "Standard_Deviations" = Stds,
-              "Excess_Volatility" = Vol))
+              "Excess_Volatility" = Vol,
+              "AIR" = AIR,
+              "AER" = AER)
+  class(result) = "cusumActMgr"
+  return(result)
 }
 
 

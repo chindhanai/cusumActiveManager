@@ -84,25 +84,22 @@ repCusumActMgr <- function(object, Cusum = c("LogExcessReturns",
                          digits = 3, nrowPrint = 20, isPrint = TRUE, isPlot = FALSE,
                          layout = NULL, stripText.cex =1, axis.cex=1, ...) {
 
-  if(Cusum == 'LogExcessReturns'){
+  if(Cusum == 'LogExcessReturns') {
     mainData = object[[1]]
-  }
-  else if(Cusum == 'TE'){
+  } else if(Cusum == 'TE') {
     mainData = object[[2]]
-  }
-  else if(Cusum == 'IR'){
+  } else if(Cusum == 'IR') {
     mainData = object[[3]]
-  }
-  else if(Cusum == 'LLR'){
+  } else if(Cusum == 'LLR') {
     mainData = object[[4]]
-  }
-  else{
+  } else {
     stop("Invalid args: Cusum must be either 'LogExcessReturns','TE',
          'IR', or 'LLR'")
   }
 
   if(isPlot){
-    plot(mainData, )
+    plot(mainData)
+  }
 
   if(isPrint){
       result = head(result, nrowPrint)
@@ -112,5 +109,6 @@ repCusumActMgr <- function(object, Cusum = c("LogExcessReturns",
       names(output) = paste(risk,decomp,sep = '')
 
       return(output)
+  }
 
 }
