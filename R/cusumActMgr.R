@@ -1,26 +1,29 @@
 #' @title Using Statistical Process Control to Monitor Active Management
 #'
-#' @description Compute the log-likelihood ratio given the performance measure,
-#' which is the information ratios of the active managers' portfolios, to gauge
-#' the performance of the active managers with respect to specific thresholds.
+#' @description Monitor the risk adjusted performance (Information Ratio) of an actively managed portfolio and
+#' raise an alarm when sufficient evidence has accrued to indicate that its current Information Ratio is 0 or worse.
+#' The monitorng is performed using an optimal changepoint detection scheme (the CUSUM algorithm)
 #' An object of class \code{"tsfm"} is returned.
 #'
 #' @details
-#' It is hard to assess the performance of the active managers. Thus investors have to continually
-#' estimate the current performance of their portfolios and rigorously reevaluate
-#' each manager’s strategy. Change point detection, such as CUSUM, is closely related to the dynamic performance
-#' measurement in sequential analysis and statistical process control (SPC), and
-#' the sequential anaysis can speed up the detection of change in systems.
+#' Assessing the performance of the active managers is hard because active returns (i.e. portfolio return - benchmark return) are noisy.
+#' In addition, the risk of these active returns must be taken account of, and this is commonly (though not universally) done by measuring
+#' the standard deviation of active returns. Empirical studies of active managers across a wide range of asset classes suggest that an
+#' Annualized Information Ratio (IR = Active Return / Std. Dev.(Active Return)) of 0.5 over a period of 5 years or more is exceptional.
+#' In addition, public markets are very efficient, and known inefficiencies disappear as they get arbitraged away, though other
+#' inefficiencies sometimes appear in their place. Consequently, the majority of active managers deliver active returns and IR close to 0, and even
+#' those with a positive IR are at constant risk of having their added value dissipate. Investors, therefore, must continually estimate
+#' the current performance of their active portfolios and determine when sufficient evidence has accrued to suggest that their active return
+#' and IR have fallen to 0 (or turned negative). Put differently, investors need to reapidly detect changes, particularly negative changes,
+#' in the performance of their portfolios.
 #'
-#' CUSUM is a procedure to rapidly detect the changes in the mean of a noisy random
-#' process and it is robust to the distribution of the portfolio returns. CUSUM offers
-#' the user the fastest way to detect a change in performance and the best efficiency
-#' over the Wald’s sequential probability ratio test (SPRT) and t-test of both stationary
-#' performance and time-varying performance. In this case, IR is used as a measure of
-#' performance as it incorporates both risk (portfolio’s tracking error) and return
-#' (portfolio’s excess return relative to the benchmark). Also, IR variance
-#' is lower than that of the Sharpe ratio and the Trynor ratio.
-#'
+#' There is a rich literature on changepoint detection, and of the many available algorithms to detect changepoints, the CUSUM (an acronym for CUmulative SUM)
+#' stands out on account of its simplicity, its robustness to the actual distribution of active returns, and the optimal trade-off between detection time and
+#' the rate of false alarms that it offers. It is closely retlated to Wald's Sequential Probability Ratio Test (SPRT) but is much simpler to implement,
+#' and requires minimal inputs from the user. In this application, it seeks to determine when the IR of a portfolio has changed from a good level (default = 0.5 )
+#' to a bad level (default = 0). An alarm is raised when the CUSUM scheme crosses a threshold, which is chosen to make the average time between false alarms
+#' 84 months (7 years). By way of comparison, the time taken to detect a transition from good performance to bad is 41 months (or 3 1/2 years). This is much faster
+#' than the traditional t-test, which would take 16 years to obtain a t-statistic of 2. The threshold can be recalibrated to meet a user's needs.
 #'
 #' \subsection{Data Processing}
 #'
