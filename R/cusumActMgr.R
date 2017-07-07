@@ -86,54 +86,6 @@
 
 ############################< MAIN CODE >###############################
 
-# This function is a simple weighted average of the current
-# return and the last time period excess return. The returned value
-# would be the current excess return used in the computation
-
-# r = a return in the current period
-# mu0 = a mean return from the last time period
-# sigma0 = an estimated volatility from the last time period.
-#          If it is not available (as for example in the first period,
-#          set it to 0, in which case, the mean)
-# win_level = the number of standard deviations at which we winsorize
-#             (default: win_level =4)
-# lambda = the exponential weighting constant (default: lambda = 0.1)
-muEst = function(r, mu0, sigma0, win_level = 4, lambda = 0.1){
-  #Winsorization
-  if (abs(r - mu0) > win_level * sigma0 ) {
-    r = mu0 + sign(r - mu0) * win_level * sigma0
-  }
-  return(lambda * r + (1 - lambda) * mu0)
-}
-
-# This function is a simple weighted average of the current
-# excess return and the last time period excess return. The returned value
-# would be the current excess return used in the computation
-
-# r = the logarithmic excess return in the current period
-# mu0 = the mean excess return from the last time period
-#       (this is often set to 0 in finance applications as the mean
-#       is small on account of market efficiency)
-# sigma0 = the estimated volatility from the last time period.
-#          If it is not available (as for example in the first
-#          period, set it to 0 or some initial estimate
-# win_level = the number of standard deviations at which we
-#             winsorize (default: win_level =4)
-# lambda_in = the exponential weighting constant when the data
-#             seems consistent with the current estimate of
-#             volatility (default: lambda = 0.1)
-# lambda_out = the exponential weighting constant when the data
-#              seems inconsistent with the current estimate of
-#              volatility (default: lambda = 0.2)
-
-sigmaEst = function(r, mu0, sigma0, win_level = 4, lambda_in = 0.1,
-                    lambda_out = 0.2){
-
-  lambda = ifelse((sigma0 < win_level * abs(r - mu0)) && (abs(r - mu0) < win_level * sigma0), lambda_in, lambda_out)
-  return(sqrt(lambda * (r - mu0) ^ 2 + (1 - lambda) * sigma0 ^ 2))
-}
-
-
 cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
                       lowerIR = 0, lambda_in = 0.10, lambda_out = 0.20,
                       winsorize = 4, filterStd = FALSE) {
@@ -365,6 +317,55 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
               "AER" = AER)
   class(result) = "cusumActMgr"
   return(result)
+}
+
+
+# This function is a simple weighted average of the current
+# return and the last time period excess return. The returned value
+# would be the current excess return used in the computation
+
+# r = a return in the current period
+# mu0 = a mean return from the last time period
+# sigma0 = an estimated volatility from the last time period.
+#          If it is not available (as for example in the first period,
+#          set it to 0, in which case, the mean)
+# win_level = the number of standard deviations at which we winsorize
+#             (default: win_level =4)
+# lambda = the exponential weighting constant (default: lambda = 0.1)
+muEst = function(r, mu0, sigma0, win_level = 4, lambda = 0.1){
+  #Winsorization
+  if (abs(r - mu0) > win_level * sigma0 ) {
+    r = mu0 + sign(r - mu0) * win_level * sigma0
+  }
+  return(lambda * r + (1 - lambda) * mu0)
+}
+
+
+# This function is a simple weighted average of the current
+# excess return and the last time period excess return. The returned value
+# would be the current excess return used in the computation
+
+# r = the logarithmic excess return in the current period
+# mu0 = the mean excess return from the last time period
+#       (this is often set to 0 in finance applications as the mean
+#       is small on account of market efficiency)
+# sigma0 = the estimated volatility from the last time period.
+#          If it is not available (as for example in the first
+#          period, set it to 0 or some initial estimate
+# win_level = the number of standard deviations at which we
+#             winsorize (default: win_level =4)
+# lambda_in = the exponential weighting constant when the data
+#             seems consistent with the current estimate of
+#             volatility (default: lambda = 0.1)
+# lambda_out = the exponential weighting constant when the data
+#              seems inconsistent with the current estimate of
+#              volatility (default: lambda = 0.2)
+
+sigmaEst = function(r, mu0, sigma0, win_level = 4, lambda_in = 0.1,
+                    lambda_out = 0.2){
+
+  lambda = ifelse((sigma0 < win_level * abs(r - mu0)) && (abs(r - mu0) < win_level * sigma0), lambda_in, lambda_out)
+  return(sqrt(lambda * (r - mu0) ^ 2 + (1 - lambda) * sigma0 ^ 2))
 }
 
 
