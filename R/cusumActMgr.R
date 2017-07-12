@@ -315,6 +315,7 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
               "Excess_Volatility" = Vol,
               "AIR" = AIR,
               "AER" = AER)
+  
   class(result) = "cusumActMgr"
   return(result)
 }
