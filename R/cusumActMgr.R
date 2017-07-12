@@ -361,11 +361,12 @@ muEst = function(r, mu0, sigma0, win_level = 4, lambda = 0.1){
 
 sigmaEst = function(r, mu0, sigma0, win_level = 4, lambda_in = 0.1,
                     lambda_out = 0.2){
-  
+
   lambda = ifelse((sigma0 < win_level * abs(r - mu0)) && (abs(r - mu0) < win_level * sigma0), lambda_in, lambda_out)
   return(sqrt(lambda * (r - mu0) ^ 2 + (1 - lambda) * sigma0 ^ 2))
 }
 
+<<<<<<< HEAD
 
 # This function is a simple weighted average of the current
 # return and the last time period excess return. The returned value
@@ -414,5 +415,4 @@ sigmaEst = function(r, mu0, sigma0, win_level = 4, lambda_in = 0.1,
   lambda = ifelse((sigma0 < win_level * abs(r - mu0)) && (abs(r - mu0) < win_level * sigma0), lambda_in, lambda_out)
   return(sqrt(lambda * (r - mu0) ^ 2 + (1 - lambda) * sigma0 ^ 2))
 }
-
 
