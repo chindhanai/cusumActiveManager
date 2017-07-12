@@ -56,29 +56,48 @@ summary.cusumActMgr <- function(object, ...){
     stop("Invalid 'cusumActMgr' object")
   }
 
-  # include the call and se.type to fitFfm
-  sum <- list("Summary Annualized cusumIR" = object$AIR,
-              "Summary Annualized Cusum Excess Returns" = object$AER)
+  # extract summary.lm objects for each factor
+  sum_name <- list("Logarithmic Excess Returns",
+                   "Annualized Moving Average",
+                   "Tracking Error",
+                   "Information Ratios",
+                   "Lindley's Recursion",
+                   "Annualized Cusum IR",
+                   "Annualized Cusum Excess Return",
+                   "Excess Volatility",
+                   "Summary Annualized cusumIR",
+                   "Summary Annualized Cusum Excess Returns")
+  sum_list <- list(summary(coredata(object$Logarithmic_Excess_Returns)),
+                   summary(coredata(object$Annual_Moving_Average)),
+                   summary(coredata(object$Tracking_Error)),
+                   summary(coredata(object$Information_Ratios)),
+                   summary(coredata(object$"Lindley's_Recursion")),
+                   summary(coredata(object$Annualized_Cusum_IR)),
+                   summary(coredata(object$Annualized_Cusum_ER)),
+                   summary(coredata(object$Excess_Volatility)),
+                   object$AIR,
+                   object$AER)
+
+  sum <- list(sum_name = sum_name, sum_list = sum_list)
   class(sum) <- "summary.cusumActMgr"
   return(sum)
 }
-
 
 #' @rdname summary.cusumActMgr
 #' @method print summary.cusumActMgr
 #' @export
 
 print.summary.cusumActMgr <- function(x, digits=3, labels=TRUE, ...) {
-  n <- length(x$sum.list)
+  n <- length(x$sum_list)
   if (labels == TRUE) {
-    if(!is.null(cl <- x$call)) {
+    if (!is.null(cl <- x$sum_name)) {
       cat("\nCall:\n")
       dput(cl)
     }
     cat("\nFactor Returns:\n", sep="")
     for (i in 1:n) {
       options(digits = digits)
-      table.coef <- (x$sum.list)[[i]]$coefficients
+      table.coef <- (x$sum_list)[[i]]$coefficients
       cat("\nTime Period ", i, ": ", names(x$sum.list[i]), "\n\n", sep="")
       r2 <- x$sum.list[[i]]$r.squared
       sigma <- x$sum.list[[i]]$sigma
@@ -88,7 +107,7 @@ print.summary.cusumActMgr <- function(x, digits=3, labels=TRUE, ...) {
   } else {
     for (i in 1:n) {
       options(digits = digits)
-      table.coef <- (x$sum.list)[[i]]$coefficients
+      table.coef <- (x$sum_list)[[i]]$coefficients
       cat(names(x$sum.list[i]), "\n")
       printCoefmat(table.coef, digits=digits, signif.legend=FALSE, ...)
       cat("\n")
