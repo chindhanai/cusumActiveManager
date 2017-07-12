@@ -46,7 +46,7 @@
 #' # summary of lm fit for a single period
 #' summary(fit2$factor.fit[[1]])
 #'
-#' @method summary ffm
+#' @method summary cusumActMgr
 #' @export
 
 summary.cusumActMgr <- function(object, ...){
@@ -87,7 +87,7 @@ summary.cusumActMgr <- function(object, ...){
 #' @method print summary.cusumActMgr
 #' @export
 
-print.summary.cusumActMgr <- function(x, digits=3, labels=TRUE, ...) {
+print.summary.cusumActMgr <- function(x, digits=3, ...) {
   n <- length(x$sum_list)
   if (labels == TRUE) {
     if (!is.null(cl <- x$sum_name)) {
