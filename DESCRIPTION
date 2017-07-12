@@ -22,5 +22,6 @@ Imports:
     robust,
     lattice,
     MASS,
+    DEoptimR
 LazyData: true
 RoxygenNote: 6.0.1
