@@ -366,8 +366,6 @@ sigmaEst = function(r, mu0, sigma0, win_level = 4, lambda_in = 0.1,
   return(sqrt(lambda * (r - mu0) ^ 2 + (1 - lambda) * sigma0 ^ 2))
 }
 
-<<<<<<< HEAD
-
 # This function is a simple weighted average of the current
 # return and the last time period excess return. The returned value
 # would be the current excess return used in the computation
