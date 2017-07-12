@@ -49,13 +49,14 @@
 #' @method summary cusumActMgr
 #' @export
 
-summary.cusumActMgr <- function(object, ...){
+summary.cusumActMgr <- function(object, digits = 3, ...){
 
   # check input object validity
   if (!inherits(object, "cusumActMgr")) {
     stop("Invalid 'cusumActMgr' object")
   }
 
+  options(digits = digits)
   # extract summary.lm objects for each factor
   sum_name <- list("Logarithmic Excess Returns",
                    "Annualized Moving Average",
@@ -67,50 +68,24 @@ summary.cusumActMgr <- function(object, ...){
                    "Excess Volatility",
                    "Summary Annualized cusumIR",
                    "Summary Annualized Cusum Excess Returns")
-  sum_list <- list(summary(coredata(object$Logarithmic_Excess_Returns)),
-                   summary(coredata(object$Annual_Moving_Average)),
-                   summary(coredata(object$Tracking_Error)),
-                   summary(coredata(object$Information_Ratios)),
-                   summary(coredata(object$"Lindley's_Recursion")),
-                   summary(coredata(object$Annualized_Cusum_IR)),
-                   summary(coredata(object$Annualized_Cusum_ER)),
+  
+  x1 = summary(coredata(object$Logarithmic_Excess_Returns))
+  x2 = summary(coredata(object$Annual_Moving_Average))
+  x3 = summary(coredata(object$Tracking_Error))
+  x4 = summary(coredata(object$Information_Ratios))
+  x5 = summary(coredata(object$"Lindley's_Recursion"))
+  x6 = summary(coredata(object$Annualized_Cusum_ER))
+  x7 = summary(coredata(object$Annualized_Cusum_IR))
+  dimnames(x1)[[2]] = dimnames(x2)[[2]] = dimnames(x3)[[2]] = dimnames(x4)[[2]] = dimnames(x5)[[2]] = dimnames(x6)[[2]] = dimnames(x7)[[2]] = ""
+  
+  sum_list <- list(x1, x2, x3, x4, x5, x6, x7,
                    summary(coredata(object$Excess_Volatility)),
                    object$AIR,
                    object$AER)
-
-  sum <- list(sum_name = sum_name, sum_list = sum_list)
+  
+  sum = list(sum_name = sum_name, sum_list = sum_list)
   class(sum) <- "summary.cusumActMgr"
   return(sum)
 }
 
 #' @rdname summary.cusumActMgr
-#' @method print summary.cusumActMgr
-#' @export
-
-print.summary.cusumActMgr <- function(x, digits=3, ...) {
-  n <- length(x$sum_list)
-  if (labels == TRUE) {
-    if (!is.null(cl <- x$sum_name)) {
-      cat("\nCall:\n")
-      dput(cl)
-    }
-    cat("\nFactor Returns:\n", sep="")
-    for (i in 1:n) {
-      options(digits = digits)
-      table.coef <- (x$sum_list)[[i]]$coefficients
-      cat("\nTime Period ", i, ": ", names(x$sum.list[i]), "\n\n", sep="")
-      r2 <- x$sum.list[[i]]$r.squared
-      sigma <- x$sum.list[[i]]$sigma
-      printCoefmat(table.coef, digits=digits, ...)
-      cat("\nR-squared: ", r2,", Residual Volatility: ", sigma,"\n", sep="")
-    }
-  } else {
-    for (i in 1:n) {
-      options(digits = digits)
-      table.coef <- (x$sum_list)[[i]]$coefficients
-      cat(names(x$sum.list[i]), "\n")
-      printCoefmat(table.coef, digits=digits, signif.legend=FALSE, ...)
-      cat("\n")
-    }
-  }
-}
