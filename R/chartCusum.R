@@ -37,6 +37,7 @@
 #' @author Chindhanai Uthaisaad
 #'
 #' @examples
+#' require(MASS)
 #' data(cusumData)
 #' results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500",
 #' data = cusumData)
