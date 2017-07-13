@@ -57,6 +57,7 @@
 #' \item{Information_Ratios}{The vector of monthly information ratios}
 #' \item{Lindley's_Recursion}{The vector  Lindley's recursion with a reset after the detection threshold (6.81) is passed.}
 #' \item{Annualized_Cusum_IR}{The vector annualized CUSUM of the information ratios}
+#' \item{Annualized Cusum Excess Return}{The vector annualized CUSUM of the excess returns}
 #' \item{Means}{The xts matrix of estimated means of the fund in the first columns,
 #' the benchmark in the second column, and the excess logarithmic returns in the third column}
 #' \item{Standard_deviations}{The xts matrix of estimated standard deviations of the fund in the first columns,
