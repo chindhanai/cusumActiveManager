@@ -64,12 +64,10 @@
 #' @export
 
 
-chartCusum <- function(object, scaleType = 'free', stripText.cex =1, 
-                       layout = NULL, digits = 3, which = NULL, ...) {
+chartCusum <- function(object, digits = 3, which = NULL, ...) {
   
-  
-  if(isPlot){
     par(mfrow = c(1,1))
+    options(digits = digits)
     
     which.vec <- which
     which <- which[1]
@@ -79,40 +77,40 @@ chartCusum <- function(object, scaleType = 'free', stripText.cex =1,
       switch(which,
              "1L" = { 
                #Plot of log-excess returns with annually moving average returns
-               logER_plot = barplot(100*results$Logarithmic_Excess_Returns, 
+               logER_plot = barplot(100*object$Logarithmic_Excess_Returns, 
                                     main = "Monthly Excess Returns",
                                     xlab = "", ylab = "%", col=4, las=1)
-               lines(x = logER_plot, y = 100*results$Annual_Moving_Average, 
+               lines(x = logER_plot, y = 100*object$Annual_Moving_Average, 
                      col=2, lwd=2)
              }, 
              "2L" = {
                #Plot of tracking error
-               plot(100*as.zoo(sqrt(12)*results$Tracking_Error), 
+               plot(100*as.zoo(sqrt(12)*object$Tracking_Error), 
                     main="Annualized Tracking Error", type = 'l', las=0,
                     xlab = "", ylab = "%", col=4, las=2)
              }, 
              "3L" = {  
                #Plot of IR
-               barplot(results$Information_Ratios, main="Estimated Information Ratios", col=4, las=1)
+               barplot(object$Information_Ratios, main="Estimated Information Ratios", col=4, las=1)
              },
              "4L" = {  
                #cusumIR
-               plot(as.zoo(results$Annualized_Cusum_IR),
+               plot(as.zoo(object$Annualized_Cusum_IR),
                     main="CUSUM Plot: Estimated Information Ratio", las=2, col=4, ylab = "", yaxt='n', lwd=2)
-               lines(coredata(results$Protractor_IR[,1]), col=2, lty = 1, lwd=2)
-               lines(coredata(results$Protractor_IR[,2]), col=2, lty = 3, lwd=2)
-               lines(coredata(results$Protractor_IR[,3]), col=2, lty = 4, lwd=2)
-               lines(coredata(results$Protractor_IR[,4]), col="purple", lty = 2, lwd=2)
-               lines(coredata(results$Protractor_IR[,5]), col=3, lty = 4, lwd=2)
-               lines(coredata(results$Protractor_IR[,6]), col=3, lty = 3, lwd=2)
-               lines(coredata(results$Protractor_IR[,7]), col=3, lty = 1, lwd=2)
+               lines(coredata(object$Protractor_IR[,1]), col=2, lty = 1, lwd=2)
+               lines(coredata(object$Protractor_IR[,2]), col=2, lty = 3, lwd=2)
+               lines(coredata(object$Protractor_IR[,3]), col=2, lty = 4, lwd=2)
+               lines(coredata(object$Protractor_IR[,4]), col="purple", lty = 2, lwd=2)
+               lines(coredata(object$Protractor_IR[,5]), col=3, lty = 4, lwd=2)
+               lines(coredata(object$Protractor_IR[,6]), col=3, lty = 3, lwd=2)
+               lines(coredata(object$Protractor_IR[,7]), col=3, lty = 1, lwd=2)
                legend("bottomright", bty = 'n', legend = format(round(seq(-2.0,2.0,2/3), 2), nsmall = 2),
                       col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 1,
                       title = "Slopes on Protractor", ncol = 2, lwd=2)
              },
              "5L" = {  
                #Lindley's Recursion
-               plot(as.zoo(-results$`Lindley's_Recursion`),
+               plot(as.zoo(-object$`Lindley's_Recursion`),
                     main="Lindley's Recursion", las=2, col=4, ylab = "")
                abline(h = -3.41, col=3, lwd=2)
                abline(h = -4.33, col="green3", lwd=2)
@@ -132,7 +130,7 @@ chartCusum <- function(object, scaleType = 'free', stripText.cex =1,
              },
              "6L" = {  
                #Excess volatility plot
-               plot(as.zoo(100*results$Excess_Volatility[,3]),
+               plot(as.zoo(100*object$Excess_Volatility[,3]),
                     main = "Excess Volatility Relative to Benchmark", las=2, col=4,
                     xlab = "", ylab = "%")
                abline(h = 0, col = 4, lty = 3)
@@ -140,8 +138,8 @@ chartCusum <- function(object, scaleType = 'free', stripText.cex =1,
              "7L" = {  
                
                #Scatter plot with robust regression
-               portRet = 100 * coredata(results$Means[,1])
-               benchRet = 100 * coredata(results$Means[,2])
+               portRet = 100 * coredata(object$Means[,1])
+               benchRet = 100 * coredata(object$Means[,2])
                Rob_lm = rlm(benchRet ~ portRet)
                Alpha = round(Rob_lm$coefficients[1], 2)
                Beta = round(Rob_lm$coefficients[2], 2)
@@ -157,15 +155,15 @@ chartCusum <- function(object, scaleType = 'free', stripText.cex =1,
              "8L" = {  
                
                #CUSUM for returns
-               plot(as.zoo(results$Annualized_Cusum_ER),
+               plot(as.zoo(object$Annualized_Cusum_ER),
                     main="CUSUM Plot: Annualized Excess Returns", las=2, col=4, ylab = "", lwd=2)
-               lines(coredata(results$Protractor_ER[,1]), col=2, lty = 1, lwd=2)
-               lines(coredata(results$Protractor_ER[,2]), col=2, lty = 3, lwd=2)
-               lines(coredata(results$Protractor_ER[,3]), col=2, lty = 4, lwd=2)
-               lines(coredata(results$Protractor_ER[,4]), col="purple", lty = 2, lwd=2)
-               lines(coredata(results$Protractor_ER[,5]), col=3, lty = 4, lwd=2)
-               lines(coredata(results$Protractor_ER[,6]), col=3, lty = 3, lwd=2)
-               lines(coredata(results$Protractor_ER[,7]), col=3, lty = 1, lwd=2)
+               lines(coredata(object$Protractor_ER[,1]), col=2, lty = 1, lwd=2)
+               lines(coredata(object$Protractor_ER[,2]), col=2, lty = 3, lwd=2)
+               lines(coredata(object$Protractor_ER[,3]), col=2, lty = 4, lwd=2)
+               lines(coredata(object$Protractor_ER[,4]), col="purple", lty = 2, lwd=2)
+               lines(coredata(object$Protractor_ER[,5]), col=3, lty = 4, lwd=2)
+               lines(coredata(object$Protractor_ER[,6]), col=3, lty = 3, lwd=2)
+               lines(coredata(object$Protractor_ER[,7]), col=3, lty = 1, lwd=2)
                legend("bottomright", bty = 'n', legend = format(round(seq(-2.0,2.0,2/3), 2), nsmall = 2),
                       col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 1,
                       title = "Slopes on Protractor", ncol = 2, lwd=2)
@@ -174,14 +172,16 @@ chartCusum <- function(object, scaleType = 'free', stripText.cex =1,
              invisible()       
       )        
       # repeat menu if user didn't choose to exit from the plot options
-      if (which==0 || length(which.vec)==1) {break} 
-      if (length(which.vec)>1) {
+      if (which == 0 || length(which.vec) == 1) {
+        break
+      } 
+      if (length(which.vec) > 1) {
         which.vec <- which.vec[-1]
         which <- which.vec[1]
-        par(ask=TRUE)
-      } else {which=NULL}   
+        par(ask = TRUE)
+      } else {
+        which = NULL
+      }   
     }
-    
-  }
   
 }
