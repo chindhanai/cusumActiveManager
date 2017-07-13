@@ -1,43 +1,35 @@
-#' @title Portfolio Exposures Report
+#' @title cusumActMgr Plots
 #'
-#' @description Calculate k factor time series based on fundamental factor model. This method takes fundamental factor model fit, 'ffm' object, and portfolio weight as inputs and generates numeric summary and plot visualization.
+#' @description Plot the elements of an \code{cusumActMgr} object.
 #'
 #' @importFrom zoo as.yearmon coredata index
 #' @importFrom graphics boxplot
 #' @importFrom stats sd
 #' @importFrom utils menu
 #' @importFrom lattice barchart
+#' @importFrom MASS rlm
 #'
-#' @param ffmObj an object of class ffm returned by fitFfm.
-#' @param weights a vector of weights of the assets in the portfolio. Default is NULL.
-#' @param isPlot logical variable to generate plot or not.
-#' @param isPrint logical variable to print numeric summary or not.
-#' @param stripLeft logical variable to choose the position of strip, 'TRUE' for drawing strips on the left of each panel, 'FALSE' for drawing strips on the top of each panel. Used only when isPlot = 'TRUE'
-#' @param layout layout is a numeric vector of length 2 or 3 giving the number of columns, rows, and pages (optional) in a multipanel display. Used only when isPlot = 'TRUE'
-#' @param color  character specifying the plotting color for all the plots
-#' @param notch logical. if notch is \code{TRUE}, a notch is drawn in each side of the boxes. If the notches of two plots do not overlap this is strong evidence that the two medians differ (Chambers et al, 1983, p. 62).Default values is \code{FALSE}.
-#' @param scaleType scaleType controls if use a same scale of y-axis, choose from c('same', 'free')
-#' @param stripText.cex a number indicating the amount by which strip text in the plot(s) should be scaled relative to the default. 1=default, 1.5 is 50\% larger, 0.5 is 50\% smaller, etc.
-#' @param axis.cex a number indicating the amount by which axis in the plot(s) should be scaled relative to the default. 1=default, 1.5 is 50\% larger, 0.5 is 50\% smaller, etc.
-#' @param digits digits of printout numeric summary. Used only when isPrint = 'TRUE'
-#' @param titleText logical varible to choose display plot title or not. Default is 'TRUE', and used only when isPlot = 'TRUE'.
-#' @param which a number to indicate the type of plot. If a subset of the plots
-#' is required, specify a subset of the numbers 1:3 for plots. If \code{which=NULL} (default), the following menu
-#' appears: \cr \cr
-#' For plots of a group of assets: \cr
-#' 1 = Time series plot of style factor exposures, \cr
-#' 2 = Boxplot of style factor exposures, \cr
-#' 3 = Barplot of means and vols of style factor exposures, and means of sector exposures (which have no vol). \cr \cr
-#' @param type character. type of lattice plot when which=1; 'l' denotes a line, 'p' denotes a point, and 'b' and 'o' both denote both together.deafault is 'b'.
-#' @param ... other graphics parameters available in tsPlotMP(time series plot only) can be passed in through the ellipses
+#' @param object An object of class cusumActMgr returned by cusumActMgr.
+#' @param digits The number of digits of numerical values in graphs
+#' @param which a number or a vector of numbers to indicate the type of plots.
+#' If a subset of the plots is required, specify a subset of the numbers 1:8
+#' for plots. The numbers 1 through 8 represent: \cr \cr
+#' 1 = Barplot of log-excess returns with annually moving average returns, \cr
+#' 2 = Plot of tracking error, \cr
+#' 3 = Barplot of the information ratio, \cr
+#' 4 = Plot of cusumIR with protractors of slopes representing IRs, \cr
+#' 5 = Plot of Lindley's Recursion with the thresholds, \cr
+#' 6 = Plot of excess volatility, \cr
+#' 7 = Scatter plot between the fund and benchmark returns with robust regression \cr
+#' 8 = Plot of cusum for returns with protractors of slopes representing the annualized returns. \cr
+#' @param ... other graphics parameters in plot
 #'
 #' @return
-#' Graph(s)
+#' Graph(s) as specified by the user
 #'
 #' @author Chindhanai Uthaisaad
 #'
 #' @examples
-#' require(MASS)
 #' data(cusumData)
 #' results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500",
 #' data = cusumData)
@@ -71,7 +63,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                     xlab = "", ylab = "%", col=4, las=2)
              },
              "3L" = {
-               #Plot of IR
+               #Barplot of IR
                barplot(object$Information_Ratios, main="Estimated Information Ratios", col=4, las=1)
              },
              "4L" = {
@@ -121,7 +113,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                #Scatter plot with robust regression
                portRet = 100 * coredata(object$Means[,1])
                benchRet = 100 * coredata(object$Means[,2])
-               Rob_lm = MASS::rlm(benchRet ~ portRet)
+               Rob_lm = rlm(benchRet ~ portRet)
                Alpha = round(Rob_lm$coefficients[1], 2)
                Beta = round(Rob_lm$coefficients[2], 2)
 
