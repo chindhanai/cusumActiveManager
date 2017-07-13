@@ -46,6 +46,7 @@ the fund relative to the benchmark}
 \item{Information_Ratios}{The vector of monthly information ratios}
 \item{Lindley's_Recursion}{The vector  Lindley's recursion with a reset after the detection threshold (6.81) is passed.}
 \item{Annualized_Cusum_IR}{The vector annualized CUSUM of the information ratios}
+\item{Annualized Cusum Excess Return}{The vector annualized CUSUM of the excess returns}
 \item{Means}{The xts matrix of estimated means of the fund in the first columns,
 the benchmark in the second column, and the excess logarithmic returns in the third column}
 \item{Standard_deviations}{The xts matrix of estimated standard deviations of the fund in the first columns,
@@ -86,11 +87,6 @@ than the traditional t-test, which would take 16 years to obtain a t-statistic o
 \examples{
 #Data Preprocessing
 Data = data(cusumData)
-x = as.yearmon(2005 + seq(0, 107)/12)
-Data = Data[,-1]
-Data = Data[-length(Data[,1]),]
-colnames(Data) = c("Parvest", "RUS2500")
-Data = as.xts(Data, order.by = x)
 results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500", data = Data)
 }
 \references{
