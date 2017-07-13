@@ -113,7 +113,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                #Scatter plot with robust regression
                portRet = 100 * coredata(object$Means[,1])
                benchRet = 100 * coredata(object$Means[,2])
-               Rob_lm = rlm(benchRet ~ portRet)
+               Rob_lm = MASS::rlm(benchRet ~ portRet)
                Alpha = round(Rob_lm$coefficients[1], 2)
                Beta = round(Rob_lm$coefficients[2], 2)
 
