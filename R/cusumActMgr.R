@@ -77,11 +77,6 @@
 #' @examples
 #' #Data Preprocessing
 #' Data = data(cusumData)
-#' x = as.yearmon(2005 + seq(0, 107)/12)
-#' Data = Data[,-1]
-#' Data = Data[-length(Data[,1]),]
-#' colnames(Data) = c("Parvest", "RUS2500")
-#' Data = as.xts(Data, order.by = x)
 #' results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500", data = Data)
 #' @export
 
@@ -316,7 +311,7 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
               "Excess_Volatility" = Vol,
               "AIR" = AIR,
               "AER" = AER)
-  
+
   class(result) = "cusumActMgr"
   return(result)
 }
