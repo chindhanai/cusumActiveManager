@@ -52,6 +52,7 @@ Graph(s)
 Calculate k factor time series based on fundamental factor model. This method takes fundamental factor model fit, 'ffm' object, and portfolio weight as inputs and generates numeric summary and plot visualization.
 }
 \examples{
+require(MASS)
 data(cusumData)
 results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500",
 data = cusumData)

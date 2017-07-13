@@ -75,9 +75,8 @@
 #' Fall 2003, pp. 86-94.
 #'
 #' @examples
-#' #Data Preprocessing
 #' Data = data(cusumData)
-#' results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500", data = Data)
+#' results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500", data = cusumData)
 #' @export
 
 ############################< MAIN CODE >###############################
