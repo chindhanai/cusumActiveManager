@@ -85,9 +85,8 @@ than the traditional t-test, which would take 16 years to obtain a t-statistic o
 \subsection{Data Processing}
 }
 \examples{
-#Data Preprocessing
 Data = data(cusumData)
-results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500", data = Data)
+results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500", data = cusumData)
 }
 \references{
 Philips, T. K., Yashchin, E. and Stein, D. M. (2003). “Using Statistical
