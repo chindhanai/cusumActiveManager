@@ -1,13 +1,13 @@
 #' @title Portfolio Exposures Report
-#' 
-#' @description Calculate k factor time series based on fundamental factor model. This method takes fundamental factor model fit, 'ffm' object, and portfolio weight as inputs and generates numeric summary and plot visualization. 
-#' 
+#'
+#' @description Calculate k factor time series based on fundamental factor model. This method takes fundamental factor model fit, 'ffm' object, and portfolio weight as inputs and generates numeric summary and plot visualization.
+#'
 #' @importFrom zoo as.yearmon coredata index
-#' @importFrom graphics boxplot 
+#' @importFrom graphics boxplot
 #' @importFrom stats sd
 #' @importFrom utils menu
 #' @importFrom lattice barchart
-#' 
+#'
 #' @param ffmObj an object of class ffm returned by fitFfm.
 #' @param weights a vector of weights of the assets in the portfolio. Default is NULL.
 #' @param isPlot logical variable to generate plot or not.
@@ -21,79 +21,59 @@
 #' @param axis.cex a number indicating the amount by which axis in the plot(s) should be scaled relative to the default. 1=default, 1.5 is 50\% larger, 0.5 is 50\% smaller, etc.
 #' @param digits digits of printout numeric summary. Used only when isPrint = 'TRUE'
 #' @param titleText logical varible to choose display plot title or not. Default is 'TRUE', and used only when isPlot = 'TRUE'.
-#' @param which a number to indicate the type of plot. If a subset of the plots 
-#' is required, specify a subset of the numbers 1:3 for plots. If \code{which=NULL} (default), the following menu 
+#' @param which a number to indicate the type of plot. If a subset of the plots
+#' is required, specify a subset of the numbers 1:3 for plots. If \code{which=NULL} (default), the following menu
 #' appears: \cr \cr
 #' For plots of a group of assets: \cr
 #' 1 = Time series plot of style factor exposures, \cr
 #' 2 = Boxplot of style factor exposures, \cr
 #' 3 = Barplot of means and vols of style factor exposures, and means of sector exposures (which have no vol). \cr \cr
 #' @param type character. type of lattice plot when which=1; 'l' denotes a line, 'p' denotes a point, and 'b' and 'o' both denote both together.deafault is 'b'.
-#' @param ... other graphics parameters available in tsPlotMP(time series plot only) can be passed in through the ellipses 
-#' 
-#' @return  
-#' A list containing mean and standard deviation of all the factors
-#' 
+#' @param ... other graphics parameters available in tsPlotMP(time series plot only) can be passed in through the ellipses
+#'
+#' @return
+#' Graph(s)
+#'
 #' @author Chindhanai Uthaisaad
-#' @examples 
 #'
-#' #Load fundamental and return data 
-#' data("stocks145scores6")
-#' dat = stocks145scores6
-#' dat$DATE = as.yearmon(dat$DATE)
-#' dat = dat[dat$DATE >=as.yearmon("2008-01-01") 
-#'           & dat$DATE <= as.yearmon("2012-12-31"),]
-#'
-#' #Load long-only GMV weights for the return data
-#' data("wtsStocks145GmvLo")
-#' wtsStocks145GmvLo = round(wtsStocks145GmvLo,5)  
-#' 
-#' # fit a fundamental factor model
-#' fit.cross <- fitFfm(data = dat, 
-#'               exposure.vars = c("SECTOR","ROE","BP","MOM121","SIZE","VOL121",
-#'               "EP"),date.var = "DATE", ret.var = "RETURN", asset.var = "TICKER", 
-#'               fit.method="WLS", z.score = TRUE)
-#'
-#' repExposures(fit.cross, wtsStocks145GmvLo, isPlot = FALSE, digits = 4)
-#' repExposures(fit.cross, wtsStocks145GmvLo, isPrint = FALSE, isPlot = TRUE, 
-#'              which = 2, add.grid = TRUE, scaleType = 'same')
-#' repExposures(fit.cross, wtsStocks145GmvLo, isPlot = TRUE, which = 1,
-#'              add.grid = FALSE, zeroLine = TRUE, color = 'Blue')
-#' repExposures(fit.cross, wtsStocks145GmvLo, isPrint = FALSE, isPlot = TRUE, 
-#'              which = 3, add.grid = FALSE, zeroLine = FALSE, color = 'Blue')
+#' @examples
+#' data(cusumData)
+#' results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500",
+#' data = cusumData)
+#' chartCusum(results, which = 8)
+#' chartCusum(results, which = c(1,3,4,7))
 #' @export
 
 
 chartCusum <- function(object, digits = 3, which = NULL, ...) {
-  
+
     par(mfrow = c(1,1))
     options(digits = digits)
-    
+
     which.vec <- which
     which <- which[1]
-    
+
     repeat {
-      
       switch(which,
-             "1L" = { 
+             "1L" = {
                #Plot of log-excess returns with annually moving average returns
-               logER_plot = barplot(100*object$Logarithmic_Excess_Returns, 
+               logER_plot = barplot(100*object$Logarithmic_Excess_Returns,
                                     main = "Monthly Excess Returns",
                                     xlab = "", ylab = "%", col=4, las=1)
-               lines(x = logER_plot, y = 100*object$Annual_Moving_Average, 
+               lines(x = logER_plot, y = 100*object$Annual_Moving_Average,
                      col=2, lwd=2)
-             }, 
+             },
              "2L" = {
                #Plot of tracking error
-               plot(100*as.zoo(sqrt(12)*object$Tracking_Error), 
+               plot(100*as.zoo(sqrt(12)*object$Tracking_Error),
                     main="Annualized Tracking Error", type = 'l', las=0,
                     xlab = "", ylab = "%", col=4, las=2)
-             }, 
-             "3L" = {  
+             },
+             "3L" = {
                #Plot of IR
                barplot(object$Information_Ratios, main="Estimated Information Ratios", col=4, las=1)
              },
-             "4L" = {  
+             "4L" = {
                #cusumIR
                plot(as.zoo(object$Annualized_Cusum_IR),
                     main="CUSUM Plot: Estimated Information Ratio", las=2, col=4, ylab = "", yaxt='n', lwd=2)
@@ -108,7 +88,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                       col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 1,
                       title = "Slopes on Protractor", ncol = 2, lwd=2)
              },
-             "5L" = {  
+             "5L" = {
                #Lindley's Recursion
                plot(as.zoo(-object$`Lindley's_Recursion`),
                     main="Lindley's Recursion", las=2, col=4, ylab = "")
@@ -128,32 +108,32 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                text(as.yearmon('2005-06', "%Y-%m"), y = -6.2, "72 | 37", cex = 0.89)
                text(as.yearmon('2005-06', "%Y-%m"), y = -6.7, "84 | 41", cex = 0.89)
              },
-             "6L" = {  
+             "6L" = {
                #Excess volatility plot
                plot(as.zoo(100*object$Excess_Volatility[,3]),
                     main = "Excess Volatility Relative to Benchmark", las=2, col=4,
                     xlab = "", ylab = "%")
                abline(h = 0, col = 4, lty = 3)
              },
-             "7L" = {  
-               
+             "7L" = {
+
                #Scatter plot with robust regression
                portRet = 100 * coredata(object$Means[,1])
                benchRet = 100 * coredata(object$Means[,2])
                Rob_lm = rlm(benchRet ~ portRet)
                Alpha = round(Rob_lm$coefficients[1], 2)
                Beta = round(Rob_lm$coefficients[2], 2)
-               
+
                plot(portRet, benchRet, pch = 16, col = 4, main = "Scatter Plot
                     Portfolio Returns and Benchmark Returns",
                     xlab = "Portfolio Returns (%)", ylab = "Benchmark Returns (%)", las=1)
                abline(Rob_lm, col=2)
                abline(v=0, h=0)
                legend("bottomright", legend = c(paste(expression(alpha), " = ", Alpha, "%"), paste(expression(beta), " = ", Beta, "")), cex = 0.7)
-               
+
              },
-             "8L" = {  
-               
+             "8L" = {
+
                #CUSUM for returns
                plot(as.zoo(object$Annualized_Cusum_ER),
                     main="CUSUM Plot: Annualized Excess Returns", las=2, col=4, ylab = "", lwd=2)
@@ -167,21 +147,21 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                legend("bottomright", bty = 'n', legend = format(round(seq(-2.0,2.0,2/3), 2), nsmall = 2),
                       col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 1,
                       title = "Slopes on Protractor", ncol = 2, lwd=2)
-               
+
              },
-             invisible()       
-      )        
+             invisible()
+      )
       # repeat menu if user didn't choose to exit from the plot options
       if (which == 0 || length(which.vec) == 1) {
         break
-      } 
+      }
       if (length(which.vec) > 1) {
         which.vec <- which.vec[-1]
         which <- which.vec[1]
         par(ask = TRUE)
       } else {
         which = NULL
-      }   
+      }
     }
-  
+
 }
