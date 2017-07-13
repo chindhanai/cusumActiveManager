@@ -1,9 +1,12 @@
 #' @title Summarizing a cusumActMgr object
 #'
 #' @description \code{summary} method for object of class \code{cusumActMgr}.
-#' Returned object is of class {summary.cusumActMgr}.
+#' Returned object is of class {summary.cusumActMgr}. The resulting object is fed to
+#' \code{print.summary.cusumActMgr} to print all the summarized objects.
 #'
-#' @param object an object of class \code{cusumActMgr} returned by \code{cusumActMgr}.
+#' @param object an object of class \code{cusumActMgr} returned from \code{cusumActMgr}.
+#' @param x an object of class \code{summary.cusumActMgr} returned from 
+#' \code{summary.cusumActMgr}.
 #' @param digits number of significants digits to use when printing.
 #' Default is 3.
 #' @param ... futher arguments passed to or from other methods.
@@ -11,17 +14,18 @@
 #' @return Returns an object of class \code{summary.ffm}.
 #'
 #' Object of class \code{summary.cusumActMgr} is a list of length 10 containing:
-#' \item{Logarithmic Excess Returns}{}
+#' \item{Logarithmic Excess Returns}{The logarithmic excess returns of the fund
+#' relative to the benchmark}
 #' \item{Annualized Moving Average}{The annualized moving average of the 
 #' logarithmic excess returns}
-#' \item{Tracking Error}{}
-#' \item{Information Ratios}{}
-#' \item{Lindley's Recursion}{}
-#' \item{Annualized Cusum IR}{}
-#' \item{Annualized Cusum Excess Return}{}
+#' \item{Tracking Error}{The monthly tracking error of the logarithmic excess returns}
+#' \item{Information Ratios}{The vector of monthly information ratios}
+#' \item{Lindley's Recursion}{The vector  Lindley's recursion with a reset after the detection threshold (6.81) is passed.}
+#' \item{Annualized Cusum IR}{The vector annualized CUSUM of the information ratios}
+#' \item{Annualized Cusum Excess Return}{The vector annualized CUSUM of the excess returns}
 #' \item{Excess Volatility}{Excess volatility of the fund, the benchmark and the excess return}
-#' \item{Summary Annualized cusumIR}{}
-#' \item{Summary Annualized Cusum Excess Returns}{}
+#' \item{Summary Annualized cusumIR}{The summary of annualized cusum IR}
+#' \item{Summary Annualized Cusum Excess Returns}{The summary of annualized cusum excess returns}
 #' 
 #' @author Chindhanai Uthaisaad.
 #'
@@ -29,7 +33,8 @@
 #' data(cusumData)
 #' results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500",
 #' data = cusumData)
-#' summary.cusumActMgr(results)
+#' x = summary.cusumActMgr(results)
+#' print.summary.cusumActMgr(x)
 #'
 #' @method summary cusumActMgr
 #' @export
@@ -75,3 +80,15 @@ summary.cusumActMgr <- function(object, digits = 3, ...){
 }
 
 #' @rdname summary.cusumActMgr
+#' @method print summary.cusumActMgr
+#' @export
+
+print.summary.cusumActMgr <- function(x, digits=3, ...) {
+  n <- length(x$sum_list)
+  for (i in 1:n) {
+    options(digits = digits)
+    cat(x$sum_name[[i]], "\n")
+    print(x$sum_list[[i]])
+    cat("\n")
+  }
+}
