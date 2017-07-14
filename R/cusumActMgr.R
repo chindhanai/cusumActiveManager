@@ -3,7 +3,7 @@
 #' @description Monitor the risk adjusted performance (Information Ratio) of an actively managed portfolio and
 #' raise an alarm when sufficient evidence has accrued to indicate that its current Information Ratio is 0 or worse.
 #' The monitorng is performed using an optimal changepoint detection scheme (the CUSUM algorithm)
-#' An object of class \code{"tsfm"} is returned.
+#' An object of class \code{"cusumActMgr"} is returned.
 #'
 #' @details
 #' Assessing the performance of the active managers is hard because active returns (i.e. portfolio return - benchmark return) are noisy.
@@ -74,6 +74,9 @@
 #' Fall 2003, pp. 86-94.
 #'
 #' @examples
+#' # Data in the example is an xts object containing two monthly returns in each column.
+#' # The first column is the fund returns and the second column is the
+#' # benchmark returns. The data is from Jan 2005 to Dec 2003.
 #' Data = data(cusumData)
 #' results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500", data = cusumData)
 #' @export

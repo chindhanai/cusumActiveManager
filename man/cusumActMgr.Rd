@@ -60,7 +60,7 @@ to IR = 3 in the seventh column used in the CUSUM IR as a protractor.}
 Monitor the risk adjusted performance (Information Ratio) of an actively managed portfolio and
 raise an alarm when sufficient evidence has accrued to indicate that its current Information Ratio is 0 or worse.
 The monitorng is performed using an optimal changepoint detection scheme (the CUSUM algorithm)
-An object of class \code{"tsfm"} is returned.
+An object of class \code{"cusumActMgr"} is returned.
 }
 \details{
 Assessing the performance of the active managers is hard because active returns (i.e. portfolio return - benchmark return) are noisy.
@@ -81,10 +81,11 @@ and requires minimal inputs from the user. In this application, it seeks to dete
 to a bad level (default = 0). An alarm is raised when the CUSUM scheme crosses a threshold, which is chosen to make the average time between false alarms
 84 months (7 years). By way of comparison, the time taken to detect a transition from good performance to bad is 41 months (or 3 1/2 years). This is much faster
 than the traditional t-test, which would take 16 years to obtain a t-statistic of 2. The threshold can be recalibrated to meet a user's needs.
-
-\subsection{Data Processing}
 }
 \examples{
+# Data in the example is an xts object containing two monthly returns in each column.
+# The first column is the fund returns and the second column is the
+# benchmark returns. The data is from Jan 2005 to Dec 2003.
 Data = data(cusumData)
 results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500", data = cusumData)
 }
