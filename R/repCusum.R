@@ -5,7 +5,7 @@
 #' \code{print.summary.cusumActMgr} to print all the summarized objects.
 #'
 #' @param object an object of class \code{cusumActMgr} returned from \code{cusumActMgr}.
-#' @param x an object of class \code{summary.cusumActMgr} returned from 
+#' @param x an object of class \code{summary.cusumActMgr} returned from
 #' \code{summary.cusumActMgr}.
 #' @param digits number of significants digits to use when printing.
 #' Default is 3.
@@ -16,7 +16,7 @@
 #' Object of class \code{summary.cusumActMgr} is a list of length 10 containing:
 #' \item{Logarithmic Excess Returns}{The logarithmic excess returns of the fund
 #' relative to the benchmark}
-#' \item{Annualized Moving Average}{The annualized moving average of the 
+#' \item{Annualized Moving Average}{The annualized moving average of the
 #' logarithmic excess returns}
 #' \item{Tracking Error}{The monthly tracking error of the logarithmic excess returns}
 #' \item{Information Ratios}{The vector of monthly information ratios}
@@ -26,7 +26,7 @@
 #' \item{Excess Volatility}{Excess volatility of the fund, the benchmark and the excess return}
 #' \item{Summary Annualized cusumIR}{The summary of annualized cusum IR}
 #' \item{Summary Annualized Cusum Excess Returns}{The summary of annualized cusum excess returns}
-#' 
+#'
 #' @author Chindhanai Uthaisaad.
 #'
 #' @examples
@@ -68,12 +68,12 @@ summary.cusumActMgr <- function(object, digits = 3, ...){
   x7 = summary(coredata(object$Annualized_Cusum_IR))
   dimnames(x1)[[2]] = dimnames(x2)[[2]] = dimnames(x3)[[2]] = ""
   dimnames(x4)[[2]] = dimnames(x5)[[2]] = dimnames(x6)[[2]] = dimnames(x7)[[2]] = ""
-  
+
   sum_list <- list(x1, x2, x3, x4, x5, x6, x7,
                    summary(coredata(object$Excess_Volatility)),
                    object$AIR,
                    object$AER)
-  
+
   sum = list(sum_name = sum_name, sum_list = sum_list)
   class(sum) <- "summary.cusumActMgr"
   return(sum)
