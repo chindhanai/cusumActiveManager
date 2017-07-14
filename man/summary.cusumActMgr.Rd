@@ -17,7 +17,7 @@ Default is 3.}
 
 \item{...}{futher arguments passed to or from other methods.}
 
-\item{x}{an object of class \code{summary.cusumActMgr} returned from 
+\item{x}{an object of class \code{summary.cusumActMgr} returned from
 \code{summary.cusumActMgr}.}
 }
 \value{
@@ -26,7 +26,7 @@ Returns an object of class \code{summary.ffm}.
 Object of class \code{summary.cusumActMgr} is a list of length 10 containing:
 \item{Logarithmic Excess Returns}{The logarithmic excess returns of the fund
 relative to the benchmark}
-\item{Annualized Moving Average}{The annualized moving average of the 
+\item{Annualized Moving Average}{The annualized moving average of the
 logarithmic excess returns}
 \item{Tracking Error}{The monthly tracking error of the logarithmic excess returns}
 \item{Information Ratios}{The vector of monthly information ratios}
