@@ -1,12 +1,14 @@
-Package: factorAnalytics2
+Package: cusumActiveManager
 Type: Package
-Title: Advancing factoranalytics
+Title: Advancing factorAnalytics
 Version: 1.0.0
-Author: Chindhanai Uthaisaad
+Author: Thomas Philips, Chindhanai Uthaisaad
 Maintainer: Chindhanai Uthaisaad <chindhanaipom@gmail.com>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Description: This package will provide a quantitative guideline to assess 
+    the performance of the active managers. We utilize the cumulative sum 
+    of the estimated (monthly) information ratio as the backbone of this
+    analysis. Graphic displays are also implemented to visualize the results.
+License: GPL-2
 Encoding: UTF-8
 Depends:
     R (>= 3.0.0),
@@ -25,4 +27,5 @@ Imports:
     DEoptimR,
     mvtnorm
 LazyData: true
+Roxygen: list(wrap = FALSE)
 RoxygenNote: 6.0.1
