@@ -34,6 +34,18 @@ used in the function \code{cusumActMgr}.
 \details{
 
 }
+\examples{
+M = 100
+Lower_Threshold = 1.00
+Upper_Threshold = 11.0
+#Monthly mu's for monthly sigma=1, annualized IR = +0.5, 0
+mu = c(0.5, 0) / sqrt(12)
+Seq_M = 0:M
+Thresholds = Lower_Threshold + Seq_M * (Upper_Threshold - Lower_Threshold) / M
+Threshold_upper = sapply(Thresholds, FUN = simulateARL, mu = mu[1], delta = 0.1)
+Threshold_lower = sapply(Thresholds, FUN = simulateARL, mu = mu[2], delta = 0.1)
+
+}
 \references{
 Philips, T. K., Yashchin, E. and Stein, D. M. (2003). “Using Statistical
 Process Control to Monitor Active Managers”, Journal of Portfolio Management,

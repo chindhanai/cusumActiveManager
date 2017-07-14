@@ -28,7 +28,7 @@
 #' Process Control to Monitor Active Managers”, Journal of Portfolio Management,
 #' Fall 2003, pp. 86-94.
 #'
-#' @example
+#' @examples
 #' M = 100
 #' Lower_Threshold = 1.00
 #' Upper_Threshold = 11.0
