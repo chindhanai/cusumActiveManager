@@ -53,7 +53,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                logER_plot = barplot(100*object$Logarithmic_Excess_Returns,
                                     main = "Monthly Excess Returns",
                                     xlab = "", ylab = "%", col=4, las=1)
-               lines(x = logER_plot, y = 100*object$Annual_Moving_Average,
+               lines(x = logER_plot, y = 100*object$Annually_Moving_Average,
                      col=2, lwd=2)
              },
              "2L" = {
@@ -156,5 +156,5 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
         which = NULL
       }
     }
-
+    par(ask = FALSE)
 }
