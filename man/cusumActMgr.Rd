@@ -83,9 +83,6 @@ to a bad level (default = 0). An alarm is raised when the CUSUM scheme crosses a
 than the traditional t-test, which would take 16 years to obtain a t-statistic of 2. The threshold can be recalibrated to meet a user's needs.
 }
 \examples{
-# Data in the example is an xts object containing two monthly returns in each column.
-# The first column is the fund returns and the second column is the
-# benchmark returns. The data is from Jan 2005 to Dec 2003.
 Data = data(cusumData)
 results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500", data = cusumData)
 }
