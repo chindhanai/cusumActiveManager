@@ -25,7 +25,6 @@
 #' 84 months (7 years). By way of comparison, the time taken to detect a transition from good performance to bad is 41 months (or 3 1/2 years). This is much faster
 #' than the traditional t-test, which would take 16 years to obtain a t-statistic of 2. The threshold can be recalibrated to meet a user's needs.
 #'
-#' \subsection{Data Processing}
 #'
 #' @param portfolioName a character representing the name of the fund.
 #' It is a required argument with no default
