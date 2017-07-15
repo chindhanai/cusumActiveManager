@@ -226,6 +226,7 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
           "maxIR" = maxIR,
           "protractor_widthIR" = protractor_widthIR,
           "protractor_heightIR" = protractor_heightIR)
+  annualizedIR = xts(annualizedIR, order.by = index(IR))
 
   #Slopes -3 to 3
   RaysIR = matrix(0, ncol = 7, nrow = n+1)
@@ -273,6 +274,7 @@ cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
           "maxER" = maxER,
           "protractor_widthER" = protractor_widthER,
           "protractor_heightER" = protractor_heightER)
+  annualizedER = xts(annualizedER, order.by = index(IR))
 
   #Slopes -3 to 3
   RaysER = matrix(0, ncol = 7, nrow = n+1)
