@@ -50,28 +50,34 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
       switch(which,
              "1L" = {
                #Plot of log-excess returns with annually moving average returns
-               P = barchart(100*coredata(object$Logarithmic_Excess_Returns),
-                        main = "Monthly Excess Returns", ylab="Excess Return",
-                        horizontal = FALSE, col = "blue",
-                        panel=function(x,y,...){
-                          panel.barchart(x,y,...)
-                          panel.lines(100*coredata(object$Annually_Moving_Average),
-                                      col=2, lwd=2)})
+               P = xyplot(100*object$Logarithmic_Excess_Returns,
+                          main = "Monthly Excess Returns", ylab="Excess Return",
+                          horizontal = FALSE, col = "blue", type = c("h", "g"), lwd = 3,
+                          scales = list(y = list(rot = 0)),
+                          panel=function(x,y,...){
+                            panel.xyplot(x,y,...)
+                            panel.lines(100*object$Annual_Moving_Average,
+                                        col=2, lwd=2)})
                print(P)
              },
              "2L" = {
                #Plot of tracking error
                P = xyplot(100*as.zoo(sqrt(12)*object$Tracking_Error),
-                      main="Annualized Tracking Error", type = 'l', las=0,
-                      xlab = "", ylab = "%", col = 4, lwd = 1.5)
+                          main="Annualized Tracking Error", type = 'l', las=0,
+                          xlab = "", ylab = "%", col = 4, lwd = 1.5,
+                          scales = list(y = list(rot = 0)))
                print(P)
              },
              "3L" = {
-               #Barplot of IR
-               P = barchart(coredata(object$Information_Ratios),
-                        main="Estimated Information Ratios",
-                        col=4, las=1, horizontal = FALSE,
-                        ylab = "IR")
+               #Plot of IR
+               P = xyplot(as.zoo(object$Information_Ratios),
+                          main="Estimated Information Ratios",
+                          col=4, las=1, horizontal = FALSE, type = 'l',
+                          ylab = "IR", lwd = 1.5,
+                          scales = list(y = list(rot = 0)),
+                          panel=function(x,y,...){
+                            panel.xyplot(x,y,...)
+                            panel.abline(h = 0, col=2, lty = 3)})
                print(P)
              },
              "4L" = {
@@ -81,6 +87,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                P = xyplot(as.zoo(object$Annualized_Cusum_IR),
                       main="CUSUM Plot: Estimated Information Ratio",
                       col=4, lwd=1.5, horizontal = FALSE,
+                      scales = list(y = list(rot = 0)),
                       panel=function(x,y,...){
                         panel.xyplot(x,y,...)
                         for (i in 1:length(colors)){
@@ -106,6 +113,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                #Lindley's Recursion
                P = xyplot(as.zoo(-object$`Lindley's_Recursion`),
                       main="Lindley's Recursion", las=2, col=4,
+                      scales = list(y = list(rot = 0)),
                       panel=function(x,y,...){
                         panel.xyplot(x,y,...)
                         for (i in 1:length(horiz)) {
@@ -125,6 +133,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                P = xyplot(as.zoo(100*object$Excess_Volatility[,3]),
                       main = "Excess Volatility Relative to Benchmark", las=2, col=4,
                       xlab = "", ylab = "%", lwd = 1.5,
+                      scales = list(y = list(rot = 0)),
                       panel=function(x,y,...){
                         panel.xyplot(x,y,...)
                         panel.abline(h = 0, col = 4, lty = 3)})
@@ -141,6 +150,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                       main = "Scatter Plot Portfolio Returns and Benchmark Returns",
                       xlab = "Portfolio Returns (%)",
                       ylab = "Benchmark Returns (%)", las=1,
+                      scales = list(y = list(rot = 0)),
                       panel=function(x,y,...){
                         panel.xyplot(x,y,...)
                         panel.abline(Rob_lm, col=2)
@@ -159,6 +169,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                P = xyplot(as.zoo(object$Annualized_Cusum_ER),
                       main="CUSUM Plot: Annualized Excess Returns",
                       las=2, col=4, ylab = "", lwd=2,
+                      scales = list(y = list(rot = 0)),
                       panel=function(x,y,...){
                         panel.xyplot(x,y,...)
                         for (i in 1:length(colors)){
