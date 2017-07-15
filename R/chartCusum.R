@@ -50,36 +50,48 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
       switch(which,
              "1L" = {
                #Plot of log-excess returns with annually moving average returns
-               logER_plot = barplot(100*object$Logarithmic_Excess_Returns,
-                                    main = "Monthly Excess Returns",
-                                    xlab = "", ylab = "%", col=4, las=1)
-               lines(x = logER_plot, y = 100*object$Annually_Moving_Average,
-                     col=2, lwd=2)
+               barchart(100*coredata(results$Logarithmic_Excess_Returns),
+                        main = "Monthly Excess Returns", ylab="Excess Return",
+                        horizontal = FALSE, col = "blue",
+                        panel=function(x,y,...){
+                          panel.barchart(x,y,...)
+                          panel.lines(100*coredata(results$Annually_Moving_Average),
+                                      col=2, lwd=2)})
              },
              "2L" = {
                #Plot of tracking error
-               plot(100*as.zoo(sqrt(12)*object$Tracking_Error),
-                    main="Annualized Tracking Error", type = 'l', las=0,
-                    xlab = "", ylab = "%", col=4, las=2)
+               xyplot(100*as.zoo(sqrt(12)*results$Tracking_Error),
+                      main="Annualized Tracking Error", type = 'l', las=0,
+                      xlab = "", ylab = "%", col = 4, lwd = 1.5)
              },
              "3L" = {
                #Barplot of IR
-               barplot(object$Information_Ratios, main="Estimated Information Ratios", col=4, las=1)
+               barchart(coredata(results$Information_Ratios),
+                        main="Estimated Information Ratios",
+                        col=4, las=1, horizontal = FALSE,
+                        ylab = "IR")
              },
              "4L" = {
                #cusumIR
-               plot(as.zoo(object$Annualized_Cusum_IR),
-                    main="CUSUM Plot: Estimated Information Ratio", las=2, col=4, ylab = "", yaxt='n', lwd=2)
-               lines(coredata(object$Protractor_IR[,1]), col=2, lty = 1, lwd=2)
-               lines(coredata(object$Protractor_IR[,2]), col=2, lty = 3, lwd=2)
-               lines(coredata(object$Protractor_IR[,3]), col=2, lty = 4, lwd=2)
-               lines(coredata(object$Protractor_IR[,4]), col="purple", lty = 2, lwd=2)
-               lines(coredata(object$Protractor_IR[,5]), col=3, lty = 4, lwd=2)
-               lines(coredata(object$Protractor_IR[,6]), col=3, lty = 3, lwd=2)
-               lines(coredata(object$Protractor_IR[,7]), col=3, lty = 1, lwd=2)
-               legend("bottomright", bty = 'n', legend = format(round(seq(-2.0,2.0,2/3), 2), nsmall = 2),
-                      col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 1,
-                      title = "Slopes on Protractor", ncol = 2, lwd=2)
+               xyplot(as.zoo(results$Annualized_Cusum_IR),
+                      main="CUSUM Plot: Estimated Information Ratio",
+                      col=4, lwd=1.5, horizontal = FALSE,
+                      panel=function(x,y,...){
+                        panel.xyplot(x,y,...)
+                        panel.lines(results$Protractor_IR[,1], col=2, lwd=2)
+                        panel.lines(results$Protractor_IR[,2], col=2, lwd=2)
+                        panel.lines(results$Protractor_IR[,3], col=2, lwd=2)
+                        panel.lines(results$Protractor_IR[,5], col=3, lwd=2)
+                        panel.lines(results$Protractor_IR[,6], col=3, lwd=2)
+                        panel.lines(results$Protractor_IR[,7], col=3, lwd=2)
+                        panel.lines(results$Protractor_IR[,4], col=1, lwd=2)},
+                      key=list(space = "right",
+                               lines = list(col=c(2,2,2,1,3,3,3), lty=1, lwd=2),
+                               text = list(c("IR = -3","IR = -2","IR = -1", "IR = 0",
+                                             "IR = 1","IR = 2","IR = 3")),
+                               title = "Slopes on Protractor",
+                               cex = 0.5)
+               )
              },
              "5L" = {
                #Lindley's Recursion
@@ -103,44 +115,57 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
              },
              "6L" = {
                #Excess volatility plot
-               plot(as.zoo(100*object$Excess_Volatility[,3]),
-                    main = "Excess Volatility Relative to Benchmark", las=2, col=4,
-                    xlab = "", ylab = "%")
-               abline(h = 0, col = 4, lty = 3)
+               xyplot(as.zoo(100*results$Excess_Volatility[,3]),
+                      main = "Excess Volatility Relative to Benchmark", las=2, col=4,
+                      xlab = "", ylab = "%", lwd = 1.5,
+                      panel=function(x,y,...){
+                        panel.xyplot(x,y,...)
+                        panel.abline(h = 0, col = 4, lty = 3)})
              },
              "7L" = {
 
                #Scatter plot with robust regression
-               portRet = 100 * coredata(object$Means[,1])
-               benchRet = 100 * coredata(object$Means[,2])
+               portRet = 100 * coredata(results$Means[,1])
+               benchRet = 100 * coredata(results$Means[,2])
                Rob_lm = MASS::rlm(benchRet ~ portRet)
-               Alpha = round(Rob_lm$coefficients[1], 2)
-               Beta = round(Rob_lm$coefficients[2], 2)
+               Alpha = round(Rob_lm$coefficients[1], 3)
+               Beta = round(Rob_lm$coefficients[2], 3)
 
-               plot(portRet, benchRet, pch = 16, col = 4, main = "Scatter Plot
-                    Portfolio Returns and Benchmark Returns",
-                    xlab = "Portfolio Returns (%)", ylab = "Benchmark Returns (%)", las=1)
-               abline(Rob_lm, col=2)
-               abline(v=0, h=0)
-               legend("bottomright", legend = c(paste(expression(alpha), " = ", Alpha, "%"), paste(expression(beta), " = ", Beta, "")), cex = 0.7)
-
+               xyplot(benchRet ~ portRet, pch = 16, col = 4,
+                      main = "Scatter Plot Portfolio Returns and Benchmark Returns",
+                      xlab = "Portfolio Returns (%)",
+                      ylab = "Benchmark Returns (%)", las=1,
+                      panel=function(x,y,...){
+                        panel.xyplot(x,y,...)
+                        panel.abline(Rob_lm, col=2)
+                        panel.abline(v=0, h=0, lty = 3)},
+                      key=list(space = "right",
+                               text = list(c(paste("Intercept =", Alpha, "%"),
+                                             paste("Slope = ", Beta, ""))),
+                               title = "Linear Fit",
+                               cex = 0.5))
              },
              "8L" = {
 
                #CUSUM for returns
-               plot(as.zoo(object$Annualized_Cusum_ER),
-                    main="CUSUM Plot: Annualized Excess Returns", las=2, col=4, ylab = "", lwd=2)
-               lines(coredata(object$Protractor_ER[,1]), col=2, lty = 1, lwd=2)
-               lines(coredata(object$Protractor_ER[,2]), col=2, lty = 3, lwd=2)
-               lines(coredata(object$Protractor_ER[,3]), col=2, lty = 4, lwd=2)
-               lines(coredata(object$Protractor_ER[,4]), col="purple", lty = 2, lwd=2)
-               lines(coredata(object$Protractor_ER[,5]), col=3, lty = 4, lwd=2)
-               lines(coredata(object$Protractor_ER[,6]), col=3, lty = 3, lwd=2)
-               lines(coredata(object$Protractor_ER[,7]), col=3, lty = 1, lwd=2)
-               legend("bottomright", bty = 'n', legend = format(round(seq(-2.0,2.0,2/3), 2), nsmall = 2),
-                      col = c(2,2,2,"purple",3,3,3), lty = c(1,3,4,2,4,3,1), cex = 1,
-                      title = "Slopes on Protractor", ncol = 2, lwd=2)
-
+               xyplot(as.zoo(results$Annualized_Cusum_ER),
+                      main="CUSUM Plot: Annualized Excess Returns",
+                      las=2, col=4, ylab = "", lwd=2,
+                      panel=function(x,y,...){
+                        panel.xyplot(x,y,...)
+                        panel.lines(results$Protractor_ER[,1], col=2, lwd=2)
+                        panel.lines(results$Protractor_ER[,2], col=2, lwd=2)
+                        panel.lines(results$Protractor_ER[,3], col=2, lwd=2)
+                        panel.lines(results$Protractor_ER[,5], col=3, lwd=2)
+                        panel.lines(results$Protractor_ER[,6], col=3, lwd=2)
+                        panel.lines(results$Protractor_ER[,7], col=3, lwd=2)
+                        panel.lines(results$Protractor_ER[,4], col=1, lwd=2)},
+                      key=list(space = "right",
+                               lines = list(col=c(2,2,2,1,3,3,3), lty=1, lwd=2),
+                               text = list(c("ER = -3%","ER = -2%","ER = -1%", "ER = 0%",
+                                             "ER = 1%","ER = 2%","ER = 3%")),
+                               title = "Slopes on Protractor\n Excess Returns",
+                               cex = 0.5))
              },
              invisible()
       )
