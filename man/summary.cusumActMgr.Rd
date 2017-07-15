@@ -46,8 +46,8 @@ Returned object is of class {summary.cusumActMgr}. The resulting object is fed t
 data(cusumData)
 results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500",
 data = cusumData)
-x = summary.cusumActMgr(results)
-print.summary.cusumActMgr(x)
+x = summary(results)
+print(x)
 
 }
 \author{
