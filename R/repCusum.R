@@ -33,8 +33,8 @@
 #' data(cusumData)
 #' results = cusumActMgr(portfolioName = "Parvest", benchmarkName = "RUS2500",
 #' data = cusumData)
-#' x = summary.cusumActMgr(results)
-#' print.summary.cusumActMgr(x)
+#' x = summary(results)
+#' print(x)
 #'
 #' @method summary cusumActMgr
 #' @export
