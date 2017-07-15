@@ -18,6 +18,7 @@ Depends:
 Imports:
     PerformanceAnalytics(>= 1.4),
     quantmod,
+    lattice,
     zoo,
     corrplot,
     robustbase,
