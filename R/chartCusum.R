@@ -132,14 +132,12 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                print(P)
              },
              "7L" = {
-
                #Scatter plot with robust regression
                portRet = 100 * coredata(object$Means[,1])
                benchRet = 100 * coredata(object$Means[,2])
                Rob_lm = MASS::rlm(benchRet ~ portRet)
                Alpha = round(Rob_lm$coefficients[1], 3)
                Beta = round(Rob_lm$coefficients[2], 3)
-
                P = xyplot(benchRet ~ portRet, pch = 16, col = 4,
                       main = "Scatter Plot Portfolio Returns and Benchmark Returns",
                       xlab = "Portfolio Returns (%)",
@@ -156,7 +154,6 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                print(P)
              },
              "8L" = {
-
                #CUSUM for returns
                P = xyplot(as.zoo(object$Annualized_Cusum_ER),
                       main="CUSUM Plot: Annualized Excess Returns",
