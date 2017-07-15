@@ -75,21 +75,21 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                print(P)
              },
              "4L" = {
+               colors = c("firebrick4", "firebrick3", "firebrick2", 1,
+                          "green4", "green3", "green2")
                #cusumIR
                P = xyplot(as.zoo(object$Annualized_Cusum_IR),
                       main="CUSUM Plot: Estimated Information Ratio",
                       col=4, lwd=1.5, horizontal = FALSE,
                       panel=function(x,y,...){
                         panel.xyplot(x,y,...)
-                        panel.lines(object$Protractor_IR[,1], col=2, lwd=2)
-                        panel.lines(object$Protractor_IR[,2], col=2, lwd=2)
-                        panel.lines(object$Protractor_IR[,3], col=2, lwd=2)
-                        panel.lines(object$Protractor_IR[,5], col=3, lwd=2)
-                        panel.lines(object$Protractor_IR[,6], col=3, lwd=2)
-                        panel.lines(object$Protractor_IR[,7], col=3, lwd=2)
-                        panel.lines(object$Protractor_IR[,4], col=1, lwd=2)},
+                        for (i in 1:length(colors)){
+                          panel.lines(object$Protractor_IR[,i], col=colors[i], lwd=1.5)
+                        }
+                        panel.lines(object$Protractor_IR[,4], col=1, lwd=1.5)
+                      },
                       key=list(space = "right",
-                               lines = list(col=c(2,2,2,1,3,3,3), lty=1, lwd=2),
+                               lines = list(col=colors, lty=1, lwd=2),
                                text = list(c("IR = -3","IR = -2","IR = -1", "IR = 0",
                                              "IR = 1","IR = 2","IR = 3")),
                                title = "Slopes on Protractor",
@@ -98,26 +98,25 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                print(P)
              },
              "5L" = {
+               horiz = c(-3.41, -4.33, -5.08, -5.72, -6.29, -6.81)
+               colors = c(3, "green3", 7, "goldenrod1", "orangered", 2)
+               ycoor = c(-3.3, -4.2, -4.9, -5.6, -6.2, -6.7)
+               thresholds = c("24 | 16", "36 | 22", "48 | 27",
+                              "60 | 32", "72 | 37","84 | 41")
                #Lindley's Recursion
                P = xyplot(as.zoo(-object$`Lindley's_Recursion`),
                       main="Lindley's Recursion", las=2, col=4,
                       panel=function(x,y,...){
                         panel.xyplot(x,y,...)
-                        panel.abline(h = -3.41, col=3, lwd=2)
-                        panel.abline(h = -4.33, col="green3", lwd=2)
-                        panel.abline(h = -5.08, col=7, lwd=2)
-                        panel.abline(h = -5.72, col="goldenrod1", lwd=2)
-                        panel.abline(h = -6.29, col="orangered", lwd=2)
-                        panel.abline(h = -6.81, col=2, lwd=2)
+                        for (i in 1:length(horiz)) {
+                          panel.abline(h = horiz[i], col=colors[i], lwd=2)
+                        }
                         panel.abline(h = 0, col = 4, lty = 3)
                         panel.text(as.yearmon('2005-06', "%Y-%m"), y = -2.0, "Avg. Crossing Time", cex = 0.7)
                         panel.text(as.yearmon('2005-06', "%Y-%m"), y = -2.5, "IR = 0.5 | IR = 0", cex = 0.7)
-                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -3.3, "24 | 16", cex = 0.89)
-                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -4.2, "36 | 22", cex = 0.89)
-                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -4.9, "48 | 27", cex = 0.89)
-                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -5.6, "60 | 32", cex = 0.89)
-                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -6.2, "72 | 37", cex = 0.89)
-                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -6.7, "84 | 41", cex = 0.89)
+                        for (i in 1:length(ycoor)) {
+                          panel.text(as.yearmon('2005-06', "%Y-%m"), y = ycoor[i], thresholds[i], cex = 0.89)
+                        }
                       })
                print(P)
              },
@@ -154,21 +153,21 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                print(P)
              },
              "8L" = {
+               colors = c("firebrick4", "firebrick3", "firebrick2", 1,
+                          "green4", "green3", "green2")
                #CUSUM for returns
                P = xyplot(as.zoo(object$Annualized_Cusum_ER),
                       main="CUSUM Plot: Annualized Excess Returns",
                       las=2, col=4, ylab = "", lwd=2,
                       panel=function(x,y,...){
                         panel.xyplot(x,y,...)
-                        panel.lines(object$Protractor_ER[,1], col=2, lwd=2)
-                        panel.lines(object$Protractor_ER[,2], col=2, lwd=2)
-                        panel.lines(object$Protractor_ER[,3], col=2, lwd=2)
-                        panel.lines(object$Protractor_ER[,5], col=3, lwd=2)
-                        panel.lines(object$Protractor_ER[,6], col=3, lwd=2)
-                        panel.lines(object$Protractor_ER[,7], col=3, lwd=2)
-                        panel.lines(object$Protractor_ER[,4], col=1, lwd=2)},
+                        for (i in 1:length(colors)){
+                          panel.lines(object$Protractor_ER[,i], col=colors[i], lwd=1.5)
+                        }
+                        panel.lines(object$Protractor_ER[,4], col=1, lwd=1.5)
+                      },
                       key=list(space = "right",
-                               lines = list(col=c(2,2,2,1,3,3,3), lty=1, lwd=2),
+                               lines = list(col=colors, lty=1, lwd=2),
                                text = list(c("ER = -3%","ER = -2%","ER = -1%", "ER = 0%",
                                              "ER = 1%","ER = 2%","ER = 3%")),
                                title = "Slopes on Protractor\n Excess Returns",
