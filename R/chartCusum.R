@@ -95,23 +95,26 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
              },
              "5L" = {
                #Lindley's Recursion
-               plot(as.zoo(-object$`Lindley's_Recursion`),
-                    main="Lindley's Recursion", las=2, col=4, ylab = "")
-               abline(h = -3.41, col=3, lwd=2)
-               abline(h = -4.33, col="green3", lwd=2)
-               abline(h = -5.08, col=7, lwd=2)
-               abline(h = -5.72, col="goldenrod1", lwd=2)
-               abline(h = -6.29, col="orangered", lwd=2)
-               abline(h = -6.81, col=2, lwd=2)
-               abline(h = 0, col = 4, lty = 3)
-               text(as.yearmon('2005-06', "%Y-%m"), y = -2.0, "Avg. Crossing Time", cex = 0.7)
-               text(as.yearmon('2005-06', "%Y-%m"), y = -2.5, "IR = 0.5 | IR = 0", cex = 0.7)
-               text(as.yearmon('2005-06', "%Y-%m"), y = -3.3, "24 | 16", cex = 0.89)
-               text(as.yearmon('2005-06', "%Y-%m"), y = -4.2, "36 | 22", cex = 0.89)
-               text(as.yearmon('2005-06', "%Y-%m"), y = -4.9, "48 | 27", cex = 0.89)
-               text(as.yearmon('2005-06', "%Y-%m"), y = -5.6, "60 | 32", cex = 0.89)
-               text(as.yearmon('2005-06', "%Y-%m"), y = -6.2, "72 | 37", cex = 0.89)
-               text(as.yearmon('2005-06', "%Y-%m"), y = -6.7, "84 | 41", cex = 0.89)
+               xyplot(as.zoo(-results$`Lindley's_Recursion`),
+                      main="Lindley's Recursion", las=2, col=4,
+                      panel=function(x,y,...){
+                        panel.xyplot(x,y,...)
+                        panel.abline(h = -3.41, col=3, lwd=2)
+                        panel.abline(h = -4.33, col="green3", lwd=2)
+                        panel.abline(h = -5.08, col=7, lwd=2)
+                        panel.abline(h = -5.72, col="goldenrod1", lwd=2)
+                        panel.abline(h = -6.29, col="orangered", lwd=2)
+                        panel.abline(h = -6.81, col=2, lwd=2)
+                        panel.abline(h = 0, col = 4, lty = 3)
+                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -2.0, "Avg. Crossing Time", cex = 0.7)
+                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -2.5, "IR = 0.5 | IR = 0", cex = 0.7)
+                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -3.3, "24 | 16", cex = 0.89)
+                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -4.2, "36 | 22", cex = 0.89)
+                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -4.9, "48 | 27", cex = 0.89)
+                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -5.6, "60 | 32", cex = 0.89)
+                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -6.2, "72 | 37", cex = 0.89)
+                        panel.text(as.yearmon('2005-06', "%Y-%m"), y = -6.7, "84 | 41", cex = 0.89)
+                      })
              },
              "6L" = {
                #Excess volatility plot
