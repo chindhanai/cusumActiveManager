@@ -52,8 +52,7 @@ chartCusum <- function(object, digits = 3, which = NULL,
       switch(which,
              "1L" = {
                # 1: Plot of log-excess returns with annually moving average returns
-               P1 = xyplot(100 * object$Logarithmic_Excess_Returns,
-                          main = "Monthly Excess Returns", ylab = "Excess Return",
+               P1 = xyplot(100 * object$Logarithmic_Excess_Returns, ylab = "Excess Return",
                           horizontal = FALSE, col = "blue", type = c("h", "g"), lwd = 3,
                           scales = list(y = list(rot = 0)),
                           panel = function(x, y,...) {
@@ -98,11 +97,26 @@ chartCusum <- function(object, digits = 3, which = NULL,
                                                  "ER = 1%","ER = 2%","ER = 3%")),
                                    title = "Slopes on Protractor\n Excess Returns",
                                    cex = 0.25))
+             if (identical(layouts[[1]], c(2,2))) {
+               print(P1, split = c(1, 1, 2, 2), more = TRUE)
+               print(P2, split = c(1, 2, 2, 2), more = TRUE)
+               print(P3, split = c(2, 1, 2, 2), more = TRUE)
+               print(P4, split = c(2, 2, 2, 2))
+             } else if (identical(layouts[[1]], c(4,1))) {
+               print(P1, split = c(1, 1, 4, 1), more = TRUE)
+               print(P2, split = c(2, 1, 4, 1), more = TRUE)
+               print(P3, split = c(3, 1, 4, 1), more = TRUE)
+               print(P4, split = c(4, 1, 4, 1))
+             } else if (identical(layouts[[1]], c(1,4))) {
+               print(P1, split = c(1, 1, 4, 1), more = TRUE)
+               print(P2, split = c(1, 2, 4, 1), more = TRUE)
+               print(P3, split = c(1, 3, 4, 1), more = TRUE)
+               print(P4, split = c(1, 4, 4, 1))
+             } else {
+               return("Invalid argument: layout of which = 1 is incorrect")
+               break
+             }
 
-               print(P1, split = c(1, 1, layouts[[1]]), more = TRUE)
-               print(P2, split = c(1, 2, layouts[[1]]), more = TRUE)
-               print(P3, split = c(2, 1, layouts[[1]]), more = TRUE)
-               print(P4, split = c(2, 2, layouts[[1]]))
              },
              "2L" = {
                # 1: Plot of IR
@@ -156,9 +170,19 @@ chartCusum <- function(object, digits = 3, which = NULL,
                               panel.text(as.yearmon('2005-06', "%Y-%m"), y = ycoor[i], thresholds[i], cex = 0.4)
                             }
                           })
-               print(P1, split = c(1, 1, layouts[[2]]), more = TRUE)
-               print(P2, split = c(1, 2, layouts[[2]]), more = TRUE)
-               print(P3, split = c(1, 3, layouts[[2]]))
+               if (identical(layouts[[2]], c(1,3))) {
+                 print(P1, split = c(1, 1, layouts[[2]]), more = TRUE)
+                 print(P2, split = c(1, 2, layouts[[2]]), more = TRUE)
+                 print(P3, split = c(1, 3, layouts[[2]]))
+               } else if (identical(layouts[[2]], c(3,1))) {
+                 print(P1, split = c(1, 1, layouts[[2]]), more = TRUE)
+                 print(P2, split = c(1, 2, layouts[[2]]), more = TRUE)
+                 print(P3, split = c(1, 3, layouts[[2]]))
+               } else {
+                 return("Invalid argument: layout of which = 2 is incorrect")
+                 break
+               }
+
              },
              "3L" = {
                #Scatter plot with robust regression
