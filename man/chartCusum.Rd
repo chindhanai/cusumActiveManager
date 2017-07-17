@@ -14,7 +14,7 @@ chartCusum(object, digits = 3, which = NULL, layouts = list(c(2, 2), c(1,
 
 \item{which}{A number or a vector of numbers to indicate the type of plots.
 If a subset of the plots is required, specify a subset of the numbers 1:3
-for plots. The numbers 1 through 8 represent: \cr \cr
+for plots. The numbers 1 to 3 represent: \cr \cr
 1 = Barplot of log-excess returns with annually moving average returns,
 plot of tracking error, Plot of excess volatility, and Plot of cusum for returns
 with protractors of slopes representing the annualized returns,\cr
