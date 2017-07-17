@@ -53,14 +53,15 @@ chartCusum <- function(object, digits = 3, which = NULL,
              "1L" = {
                # 1: Plot of log-excess returns with annually moving average returns
                P1 = xyplot(100 * object$Logarithmic_Excess_Returns, ylab = "Excess Return",
-                          horizontal = FALSE, col = "blue", type = c("h", "g"), lwd = 3,
-                          scales = list(y = list(rot = 0)),
-                          panel = function(x, y,...) {
+                           main = "Montly Excess Return",
+                           horizontal = FALSE, col = "blue", type = c("h", "g"), lwd = 3,
+                           scales = list(y = list(rot = 0)),
+                           panel = function(x, y,...) {
                             panel.xyplot(x, y,...)
                             panel.lines(100 * object$Annual_Moving_Average,
                                         col=2, lwd=2)
-                          },
-                          key = list(corner = c(1, 0.1),
+                           },
+                           key = list(corner = c(1, 0.1),
                                      lines = list(col = 2, lty = 1, lwd = 2),
                                      text = list("Moving Average"),
                                      cex = 0.4))
