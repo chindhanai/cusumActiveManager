@@ -4,8 +4,7 @@
 \alias{chartCusum}
 \title{cusumActMgr Plots}
 \usage{
-chartCusum(object, digits = 3, which = NULL, layouts = list(c(2, 2), c(1,
-  3)), ...)
+chartCusum(object, digits = 3, which = NULL, ...)
 }
 \arguments{
 \item{object}{An object of class cusumActMgr returned by cusumActMgr.}
@@ -13,19 +12,15 @@ chartCusum(object, digits = 3, which = NULL, layouts = list(c(2, 2), c(1,
 \item{digits}{The number of digits of numerical values in graphs}
 
 \item{which}{A number or a vector of numbers to indicate the type of plots.
-If a subset of the plots is required, specify a subset of the numbers 1:3
-for plots. The numbers 1 to 3 represent: \cr \cr
+If a subset of the plots is required, specify a subset of the numbers 1 and 2
+for plots. The numbers 1 and 2 represent: \cr \cr
 1 = Barplot of log-excess returns with annually moving average returns,
 plot of tracking error, Plot of excess volatility, and Plot of cusum for returns
 with protractors of slopes representing the annualized returns,\cr
 2 = Barplot of the information ratio, plot of cusumIR with protractors
 of slopes with corresponding IR, and a plot of Lindley's Recursion with
-the thresholds\cr
-3 = Scatter plot between the fund and benchmark returns with robust regression \cr}
-
-\item{layouts}{A list containing two vectors. The first vector corresponds to
-the layout of 'which = 1', and the second vector corresponds to that of 'which = 2'.
-Default is list(c(2,2), c(1,3))}
+the thresholds, and a scatter plot between the fund and benchmark returns
+with robust regression\cr}
 
 \item{...}{other graphics parameters in plot}
 }

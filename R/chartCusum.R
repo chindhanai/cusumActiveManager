@@ -52,6 +52,8 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                            main = "Monthly Excess Return",
                            horizontal = FALSE, col = "blue", type = c("h", "g"), lwd = 3,
                            scales = list(y = list(rot = 0)), xlab = "",
+                           strip.left = F,
+                           strip = T,
                            panel = function(x, y,...) {
                             panel.xyplot(x, y,...)
                             panel.lines(100 * object$Annual_Moving_Average,
@@ -60,14 +62,14 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                            key = list(corner = c(1, 0.1),
                                      lines = list(col = 2, lty = 1, lwd = 2),
                                      text = list("Moving Average"),
-                                     cex = 0.4))
+                                     cex = 0.55))
                # 3: Plot of tracking error
-               P3 = xyplot(100*as.zoo(sqrt(12)*object$Tracking_Error),
-                          main="Annualized Tracking Error", type = 'l', las=0,
+               P3 = xyplot(100 * sqrt(12)*object$Tracking_Error,
+                          main="Annualized Tracking Error", type = c('l', 'g'), las=0,
                           xlab = "", ylab = "%", col = 4, lwd = 1.5,
                           scales = list(y = list(rot = 0)))
                # 4: Excess volatility plot
-               P4 = xyplot(as.zoo(100*object$Excess_Volatility[,3]),
+               P4 = xyplot(object$Excess_Volatility[,3],
                           main = "Excess Volatility", las=2, col=4,
                           xlab = "", ylab = "%", lwd = 1.5,
                           scales = list(y = list(rot = 0)),
@@ -77,7 +79,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                colors = c("firebrick4", "firebrick3", "firebrick2", 1,
                           "green4", "green3", "green2")
                # 2: CUSUM for returns
-               P2 = xyplot(as.zoo(object$Annualized_Cusum_ER),
+               P2 = xyplot(object$Annualized_Cusum_ER,
                           main="Cusum Excess Returns",
                           las=2, col=4, ylab = "", lwd = 1.5, xlab = "",
                           scales = list(y = list(rot = 0)),
@@ -92,8 +94,8 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                                    lines = list(col = colors, lty = 1, lwd = 1.5),
                                    text = list(c("ER = -3%","ER = -2%","ER = -1%", "ER = 0%",
                                                  "ER = 1%","ER = 2%","ER = 3%")),
-                                   title = "Slopes on Protractor\n Excess Returns",
-                                   cex = 0.25))
+                                   title = "Slopes on Protractor",
+                                   cex = 0.4))
 
                print(P1, split = c(1, 1, 2, 2), more = TRUE)
                print(P2, split = c(2, 1, 2, 2), more = TRUE)
@@ -130,7 +132,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                                    text = list(c("IR = -3","IR = -2","IR = -1", "IR = 0",
                                                  "IR = 1","IR = 2","IR = 3")),
                                    title = "Slopes on Protractor",
-                                   cex = 0.2))
+                                   cex = 0.4))
 
                horiz = c(-3.41, -4.33, -5.08, -5.72, -6.29, -6.81)
                colors2 = c(3, "green3", 7, "goldenrod1", "orangered", 2)
@@ -153,18 +155,14 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                               panel.text(as.yearmon('2005-06', "%Y-%m"), y = ycoor[i], thresholds[i], cex = 0.4)
                             }
                           })
-               print(P1, split=c(1,1,2,2), more=TRUE)
-               print(P2, split=c(2,1,2,2), more=TRUE)
-               print(P3, position = c(.25,0,0.75,0.5))
-             },
-             "3L" = {
+
                #Scatter plot with robust regression
                portRet = 100 * coredata(object$Means[,1])
                benchRet = 100 * coredata(object$Means[,2])
                Rob_lm = MASS::rlm(benchRet ~ portRet)
                Alpha = round(Rob_lm$coefficients[1], 3)
                Beta = round(Rob_lm$coefficients[2], 3)
-               P = xyplot(benchRet ~ portRet, pch = 16, col = 4,
+               P4 = xyplot(benchRet ~ portRet, pch = 16, col = 4,
                           main = "Scatter Plot Portfolio Returns and Benchmark Returns",
                           xlab = "Portfolio Returns (%)",
                           ylab = "Benchmark Returns (%)", las=1,
@@ -178,7 +176,11 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                                                  paste("Slope = ", Beta, ""))),
                                    title = "Linear Fit",
                                    cex = 0.5))
-               print(P)
+
+               print(P1, split=c(1,1,2,2), more=TRUE)
+               print(P2, split=c(2,1,2,2), more=TRUE)
+               print(P3, split=c(1,2,2,2), more=TRUE)
+               print(P4, split=c(2,2,2,2))
              },
              invisible()
       )
