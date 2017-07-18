@@ -118,17 +118,17 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                # 2: cusumIR
                P2 = xyplot(as.zoo(object$Annualized_Cusum_IR),
                           main="Cusum Estimated IR",
-                          col=4, lwd=1.5, horizontal = FALSE,
+                          col=4, lwd=1.5,
                           scales = list(y = list(rot = 0)),
                           panel=function(x,y,...){
                             panel.xyplot(x,y,...)
-                            for (i in 1:length(colors)){
+                            for (i in 1:length(colors1)){
                               panel.lines(object$Protractor_IR[,i], col=colors1[i], lwd=1.5)
                             }
                             panel.lines(object$Protractor_IR[,4], col=1, lwd=1.5)
                           },
                           key=list(corner = c(1,0),
-                                   lines = list(col=colors, lty=1, lwd=2),
+                                   lines = list(col = colors1, lty=1, lwd=2),
                                    text = list(c("IR = -3","IR = -2","IR = -1", "IR = 0",
                                                  "IR = 1","IR = 2","IR = 3")),
                                    title = "Slopes on Protractor",
