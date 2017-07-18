@@ -98,8 +98,8 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                                    cex = 0.4))
 
                print(P1, split = c(1, 1, 2, 2), more = TRUE)
-               print(P2, split = c(2, 1, 2, 2), more = TRUE)
-               print(P3, split = c(1, 2, 2, 2), more = TRUE)
+               print(P2, split = c(1, 2, 2, 2), more = TRUE)
+               print(P3, split = c(2, 1, 2, 2), more = TRUE)
                print(P4, split = c(2, 2, 2, 2))
 
              },
