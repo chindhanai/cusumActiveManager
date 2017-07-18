@@ -12,15 +12,15 @@
 #' @param object An object of class cusumActMgr returned by cusumActMgr.
 #' @param digits The number of digits of numerical values in graphs
 #' @param which A number or a vector of numbers to indicate the type of plots.
-#' If a subset of the plots is required, specify a subset of the numbers 1:3
-#' for plots. The numbers 1 to 3 represent: \cr \cr
+#' If a subset of the plots is required, specify a subset of the numbers 1 and 2
+#' for plots. The numbers 1 and 2 represent: \cr \cr
 #' 1 = Barplot of log-excess returns with annually moving average returns,
 #' plot of tracking error, Plot of excess volatility, and Plot of cusum for returns
 #' with protractors of slopes representing the annualized returns,\cr
 #' 2 = Barplot of the information ratio, plot of cusumIR with protractors
 #' of slopes with corresponding IR, and a plot of Lindley's Recursion with
-#' the thresholds\cr
-#' 3 = Scatter plot between the fund and benchmark returns with robust regression \cr
+#' the thresholds, and a scatter plot between the fund and benchmark returns
+#' with robust regression\cr
 #' @param ... other graphics parameters in plot
 #'
 #' @return
