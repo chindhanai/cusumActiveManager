@@ -65,7 +65,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                            key = list(corner = c(1, 0.1),
                                      lines = list(col = 2, lty = 1, lwd = 2),
                                      text = list("12 Month Moving Average"),
-                                     cex = 0.6))
+                                     cex = 0.8))
                # 2: Plot of IR
                P2 = xyplot(obj2, main="Monthly Estimate of Annualized IR",
                            col=4, las=1, horizontal = FALSE, type = 'h',
@@ -82,7 +82,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                            ylim = c(min(obj3)-1, max(obj3)+1),
                            scales = list(y = list(rot = 0), axs='i'))
                # 4: Excess volatility plot
-               P4 = xyplot(obj4, main = "Excess Volatility", las=2, col=4,
+               P4 = xyplot(obj4, main = "Excess Volatility", type = c('l', 'g'), col=4,
                            xlab = "", ylab = "Excess Volatility (%)", lwd = 1.5,
                            scales = list(y = list(rot = 0), axs='i'),
                            ylim = c(min(obj4)-1, max(obj4)+1),
@@ -114,12 +114,12 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                              }
                              panel.lines(object$Protractor_ER[,4], col = 1, lwd = 1.5)
                            },
-                           key = list(corner = c(1, 0),
+                           key = list(corner = c(0.97, 0),
                                       lines = list(col = colors, lty = 1, lwd = 1.5),
                                       text = list(c("ER = -3%","ER = -2%","ER = -1%", "ER = 0%",
                                                     "ER = 1%","ER = 2%","ER = 3%")),
                                       title = "Slopes on Protractor",
-                                      cex = 0.48))
+                                      cex = 0.6))
 
                colors1 = c("firebrick4", "firebrick3", "firebrick2", 1,
                           "green4", "green3", "green2")
@@ -135,12 +135,12 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                             }
                             panel.lines(object$Protractor_IR[,4], col=1, lwd=1.5)
                            },
-                           key=list(corner = c(1,0),
+                           key=list(corner = c(0.957,0),
                                    lines = list(col = colors1, lty=1, lwd=2),
                                    text = list(c("IR = -3","IR = -2","IR = -1", "IR = 0",
                                                  "IR = 1","IR = 2","IR = 3")),
                                    title = "Slopes on Protractor",
-                                   cex = 0.48))
+                                   cex = 0.6))
 
                horiz = c(-3.41, -4.33, -5.08, -5.72, -6.29, -6.81)
                colors2 = c(3, "green3", 7, "goldenrod1", "orangered", 2)
@@ -150,7 +150,6 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                # 3: Lindley's Recursion
                P3 = xyplot(obj3, main="Page’s Procedure: Likelihood Ratio Test",
                            col=4, scales = list(y = list(rot = 0), axs = 'i'),
-                           ylim = c(min(obj3)-1, max(obj3)+1), xlab = "",
                            panel=function(x,y,...){
                             panel.xyplot(x,y,...)
                             for (i in 1:length(horiz)) {
@@ -180,7 +179,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                             panel.abline(Rob_lm, col=2)
                             panel.abline(v=0, h=0, lty = 3)},
                           key=list(corner = c(0.92, 0.08),
-                                   text = list(c(paste("Intercept =", Alpha, "%"),
+                                   text = list(c(paste("Intercept =", 12 * Alpha, "% / annum"),
                                                  paste("Slope = ", Beta, ""))),
                                    title = "Linear Fit",
                                    cex = 0.7))
