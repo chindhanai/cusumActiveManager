@@ -68,7 +68,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                                      cex = 0.8))
                # 2: Plot of IR
                P2 = xyplot(obj2, main="Monthly Estimate of Annualized IR",
-                           col=4, las=1, horizontal = FALSE, type = 'h',
+                           col=4, las=1, horizontal = FALSE, type = c('h', 'g'),
                            ylab = "IR", lwd = 1.75,
                            scales = list(y = list(rot = 0), axs='i'),
                            ylim = c(min(obj2)-1, max(obj2)+1),
