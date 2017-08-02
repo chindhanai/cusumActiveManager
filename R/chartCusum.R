@@ -55,7 +55,9 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                P1 = xyplot(obj1, ylab = "Excess Return (%)",
                            main = "Monthly Excess Return",
                            horizontal = FALSE, col = "blue", type = c("h", "g"), lwd = 3,
-                           scales = list(y = list(rot = 0), axs='i'), xlab = "",
+                           scales = list(y = list(rot = 0), axs='i',
+                                         tick.number = 10),
+                           xlab = "",
                            ylim = c(min(obj1)-1, max(obj1)+1),
                            panel = function(x, y,...) {
                             panel.xyplot(x, y,...)
@@ -70,7 +72,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                P2 = xyplot(obj2, main="Monthly Estimate of Annualized IR",
                            col=4, las=1, horizontal = FALSE, type = c('h', 'g'),
                            ylab = "IR", lwd = 1.75,
-                           scales = list(y = list(rot = 0), axs='i'),
+                           scales = list(y = list(rot = 0), axs='i', x = list(tick.number = 15)),
                            ylim = c(min(obj2)-1, max(obj2)+1),
                            panel=function(x,y,...){
                              panel.xyplot(x,y,...)
@@ -80,11 +82,11 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                            type = c('l', 'g'), las=0,
                            xlab = "", ylab = "Tracking Error (%)", col = 4, lwd = 1.5,
                            ylim = c(min(obj3)-1, max(obj3)+1),
-                           scales = list(y = list(rot = 0), axs='i'))
+                           scales = list(y = list(rot = 0), axs='i'), tick.number = 10)
                # 4: Excess volatility plot
                P4 = xyplot(obj4, main = "Excess Volatility", type = c('l', 'g'), col=4,
                            xlab = "", ylab = "Excess Volatility (%)", lwd = 1.5,
-                           scales = list(y = list(rot = 0), axs='i'),
+                           scales = list(y = list(rot = 0), axs='i', tick.number = 10),
                            ylim = c(min(obj4)-1, max(obj4)+1),
                            panel=function(x,y,...){
                             panel.xyplot(x,y,...)
