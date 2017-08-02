@@ -17,7 +17,7 @@
 #' create a portfolio with a targeted level of volatility but with a lower level of tail risk.
 #'
 #' In the absence of any constraints, mean-variance risk budgets are given by
-#' \eqn{\vec{\sigma} = \frac{C^{-1}}{\sqrt{IR^T C^{-1} IR}} \cdot \sigma_{Target}}
+#' \deqn{\vec{\sigma} = \frac{C^{-1}}{\sqrt{IR^T C^{-1} IR}} \cdot \sigma_{Target}}
 #' where IR is the Information Ratio: \eqn{IR = \frac{E[r]}{\sigma}} and C is the correlation
 #' (not covariance) matrix. In general, it is extremely hard to allocate Expected Shortfall
 #' between strategies (or securities) in a way that achievees a target level of Expected
@@ -33,19 +33,19 @@
 #' that the constant cancels out from the numerator and denominator and leaves the risk budgets
 #' unchanged.
 #'
-#' \eqn{(IR^\prime) = \frac{E[r]}{ES} = IR \cdot \frac{\sigma}{ES} = \frac{IR}{ES / \sigma}}.
+#' \deqn{(IR^\prime) = \frac{E[r]}{ES} = IR \cdot \frac{\sigma}{ES} = \frac{IR}{ES / \sigma}}.
 #' We call \eqn{\frac{ES}{\sigma}} the Tail Risk Ratio. we want to bias our risk budgets away
 #' from strategies or securiites with high tail risk ratios, and towards startegies and
 #' securities with low tail risk ratios. We therefore make an ad-hoc substitution and
 #' rewrite the expression for the risk budgets as follows:
 #'
-#' \eqn{\vec{\sigma} = \frac{C^{-1}}{\sqrt{(IR^\prime)^T {C}^{-1} IR^\prime}} \cdot \sigma_{Target}}
+#' \deqn{\vec{\sigma} = \frac{C^{-1}}{\sqrt{(IR^\prime)^T {C}^{-1} IR^\prime}} \cdot \sigma_{Target}}
 #'
 #' in some risk budgeing applications, the various strategies / securities are only weakly
 #' correlated, and in these cases, the solution can be made even more robust by averaging the
 #' off-diagonal entries in the correlation matrix, so that
 #'
-#' \eqn{\vec{\sigma} = \frac{\bar{C}^{-1}}{\sqrt{(IR^\prime)^T \bar{C}^{-1} IR^\prime}} \cdot \sigma_{Target}}
+#' \deqn{\vec{\sigma} = \frac{\bar{C}^{-1}}{\sqrt{(IR^\prime)^T \bar{C}^{-1} IR^\prime}} \cdot \sigma_{Target}}
 #'
 #' This simple closed form solution with the inclusion of tail risk and with a stabilized
 #' correlation matrix, hardly ever results in negative solutions, and there is no need in
