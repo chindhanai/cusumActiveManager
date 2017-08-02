@@ -85,8 +85,8 @@ portfolios, and takes into account both the volatility and the tail risk of stra
 create a portfolio with a targeted level of volatility but with a lower level of tail risk.
 
 In the absence of any constraints, mean-variance risk budgets are given by
-\deqn{\vec{\sigma} = \frac{C^{-1}}{\sqrt{IR^T C^{-1} IR}} \cdot \sigma_{Target}}
-where IR is the Information Ratio: \deqn{IR = \frac{E[r]}{\sigma}} and C is the correlation
+\eqn{\vec{\sigma} = \frac{C^{-1}}{\sqrt{IR^T C^{-1} IR}} \cdot \sigma_{Target}}
+where IR is the Information Ratio: \eqn{IR = \frac{E[r]}{\sigma}} and C is the correlation
 (not covariance) matrix. In general, it is extremely hard to allocate Expected Shortfall
 between strategies (or securities) in a way that achievees a target level of Expected
 Shortfall for the portfolio. This algorithm finds a pragmatic middle way - it allocates
@@ -102,24 +102,24 @@ that the constant cancels out from the numerator and denominator and leaves the 
 unchanged.
 
 \eqn{(IR^\prime) = \frac{E[r]}{ES} = IR \cdot \frac{\sigma}{ES} = \frac{IR}{ES / \sigma}}.
-We call \deqn{\frac{ES}{\sigma}} the Tail Risk Ratio. we want to bias our risk budgets away
+We call \eqn{\frac{ES}{\sigma}} the Tail Risk Ratio. we want to bias our risk budgets away
 from strategies or securiites with high tail risk ratios, and towards startegies and
 securities with low tail risk ratios. We therefore make an ad-hoc substitution and
 rewrite the expression for the risk budgets as follows:
 
-\deqn{\vec{\sigma} = \frac{C^{-1}}{\sqrt{(IR^\prime)^T {C}^{-1} IR^\prime}} \cdot \sigma_{Target}}
+\eqn{\vec{\sigma} = \frac{C^{-1}}{\sqrt{(IR^\prime)^T {C}^{-1} IR^\prime}} \cdot \sigma_{Target}}
 
 in some risk budgeing applications, the various strategies / securities are only weakly
 correlated, and in these cases, the solution can be made even more robust by averaging the
 off-diagonal entries in the correlation matrix, so that
 
-\deqn{\vec{\sigma} = \frac{\bar{C}^{-1}}{\sqrt{(IR^\prime)^T \bar{C}^{-1} IR^\prime}} \cdot \sigma_{Target}}
+\eqn{\vec{\sigma} = \frac{\bar{C}^{-1}}{\sqrt{(IR^\prime)^T \bar{C}^{-1} IR^\prime}} \cdot \sigma_{Target}}
 
 This simple closed form solution with the inclusion of tail risk and with a stabilized
 correlation matrix, hardly ever results in negative solutions, and there is no need in
 practice to include a long-only constraint - we just round up to 0 on the few occasions when
-a risk budget appears. However,in the general case,if we want to bound \deqn{\sigma_i} between
-\deqn{\sigma_i^U} and \deqn{\sigma_i^L}, we either have to solve a full mean-variance optimization
+a risk budget appears. However,in the general case,if we want to bound \eqn{\sigma_i} between
+\eqn{\sigma_i^U} and \eqn{\sigma_i^L}, we either have to solve a full mean-variance optimization
 (and have to ignore  tail risk) or create a simulation based or historical optimization.
 Instead, we can approximate the problem using an iterative scheme that implements a
 heuristic for addiing to or subracting from all risk budgets in a way that allows
