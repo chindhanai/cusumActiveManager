@@ -4,55 +4,126 @@
 \alias{robRiskBudget}
 \title{Simple and Robust Risk Budgeting with Expected Shortfall}
 \usage{
-robRiskBudget(returns, rf = 0, ER = NULL, IR = NULL, TE = NULL,
+robRiskBudget(returns = NULL, rf = 0, ER = NULL, IR = NULL, TE = NULL,
   corMat = NULL, ES = NULL, ESMethod = c("modified", "gaussian",
   "historical"), corMatMethod = c("auto", "mcd", "pairwiseQC", "pairwiseGK"),
-  targetVol = 0.02, shrink = FALSE, avgCor = FALSE, p = 0.95)
+  targetVol = 0.02, shrink = FALSE, avgCor = FALSE, p = 0.95,
+  lower = 0, upper = 1, K = 100, maxit = 50, tol = 1e-05)
 }
 \arguments{
-\item{returns}{matrix with a time series of returns for each strategy}
+\item{returns}{A matrix with a time series of returns for each asset / strategy}
 
-\item{rf}{a vector of the risk free rates in each time period, but could also be the returns of a common benchmark}
+\item{rf}{A vector with the risk free rate in each time period; could also be the returns of a common benchmark}
 
-\item{ER}{a vector of exogeneously derived prospective expeted returns. Either IR or ER must be specified.}
+\item{ER}{A vector of exogeneously derived prospective expected returns. Either IR or ER must be specified.}
 
-\item{IR}{a vector of exogeneously derived prospective information ratios. Either IR or ER must be specified.}
+\item{IR}{A vector of exogeneously derived prospective information ratios. Either IR or ER must be specified.}
 
-\item{TE}{a vector of exogneously derived prospective volatilites (tracking errors). If it is not specified, it will be estimated from the time series of asset / strategy returns.}
+\item{TE}{A vector of exogneously derived prospective volatilites (tracking errors). If it is not specified,
+it will be estimated from the time series of asset / strategy returns.}
 
-\item{corMat}{Exogneously derived correlation matrix. If it is not specified, it will be estimated from the time series of asset / strategy returns.}
+\item{corMat}{Exogneously derived correlation matrix. If it is not specified, it will be estimated
+from the time series of asset / strategy returns.}
 
-\item{ES}{the user's speculated expected shortfall. If it is not specified, it will be estimated from the time series of asset / strategy returns.}
+\item{ES}{The user's speculated expected shortfall. If it is not specified, it will be estimated
+from the time series of asset / strategy returns using one of 3 user-selectable methods.}
 
-\item{ESMethod}{the method used to compute ES from PerformanceAnalytics}
+\item{ESMethod}{The method used to compute ES (the methods are available in PerformanceAnalytics)}
 
-\item{corMatMethod}{the method used to estimate the robust correlation matrix, default = "auto"}
+\item{corMatMethod}{the method used to estimate the robust correlation matrix,
+(the methods are available in library robust, and the default is "auto")}
 
-\item{targetVol}{the target volatility}
+\item{targetVol}{The target volatility}
 
-\item{shrink}{logical value that determines whether or not we want to shrink the expected returns to their grand mean}
+\item{shrink}{Logical value that determines whether or not we want to shrink the expected returns toward their grand mean
+Uses James-Stein shrinkage, but is applicable only when expected returns are estimated by averaging historical returns,}
 
-\item{avgCor}{logical value that determines if we want to set each off-diagonal element to the average of all the off-diagonal elements}
+\item{avgCor}{Logical value that determines if we want to set each off-diagonal element in the correlation matrix
+to the average of all its off-diagonal elements}
 
-\item{p}{specified probability used to compute ES}
+\item{p}{User-specified confidence level for computing ES}
+
+\item{lower}{A numeric or vector of lower bounds \vec{\sigma^L} of risk budgets. Default is 0.}
+
+\item{upper}{A numeric or vector of upper bounds \vec{\sigma^L} of risk budgets. Default is 1.}
+
+\item{K}{A tuning factor for the iterative algorithm. Default is 100}
+
+\item{maxit}{A number of maximum iterations. Default is 50.}
+
+\item{tol}{An accuracy of the estimation with respect to the targeted volatility. Default is {10^{-5}}}
 }
 \value{
 \code{robRiskBudget} returns a \code{list} containing the following objects:
-\item{riskBudget}{The vector of final risk budgets in each asset after the optimization}
-\item{excessReturns}{The achieved volatility from the risk budgets}
-\item{avgOffDiag}{The difference between the achieved volatility and the targeted volatility}
-\item{targetVol}{The matrix of risk budgets in each iteration columnwise}
-\item{avgCor}{The matrix whose columns represent the vector of normalized distances in each iteration}
-\item{TE}{The vector of tracking errors}
-\item{ES}{The vector of estimated ES}
-\item{modIR}{The vector od the modified IR by the fraction TEES}
+\item{initialRiskBudget}{The vector of unconstrained risk budgets}
+\item{finalRiskBudget}{The vector of final risk budgets for each asset}
+\item{iterativeRiskBudget}{The matrix of risk budgets in each iteration columnwise}
+\item{targetVol}{The target volatility for the portfolio}
+\item{avgCor}{The average of all off-diagonal correlations}
+\item{ER}{The average returns (shrunk if called for) or the user supplied expected returns}
+\item{TE}{The estimated tracking errors or the user supplied tracking errors}
+\item{ES}{The vector of estimated ESs or the user supplied ESs}
+\item{IR}{The shrunk average IRs or the user supplied IRs}
+\item{modIR}{The vector of modified IRs}
 }
 \description{
-We implement the tracking error allocation in both correlated and noncorrelated
-alpha sources
+This function immplements the Philips / Liu method to compute an optimal set of
+risk budgets that acheive #' a target level of volatility, but with lower expected shortfall.
+It works best with weakly correlated strategies, as one might #' find in absolute return
+portfolios, and takes into account both the volatility and the tail risk of strategies to
+createa portfolio with a targeted level of volatility but with a lower level of tail risk.
+
+In the absence of any constraints, mean-variance risk budgets are given by
+
+{\vec{\sigma} = \frac{{C}^{-1}}}{\sqrt{(IR)^T {C}^{-1} IR^}}\cdot \sigma_{Target}
+where IR is the Information Ratio: IR = \frac{E[r]}{\sigma} and C is the correlation
+(not covariance) matrix. In general, it is extremely hard to allocate Expected Shortfall
+between strategies (or securities) in a way that achievees a target level of Expected
+Shortfall for the portfolio. This algorithm finds a pragmatic middle way - it allocates
+risk using volatility as the measure of risk, but uses Expected Shortfall to guide its
+allocations.
+
+To do so, we start with the observation that Information Ratio is the ratio of return to
+risk, and define tne Modified Information Ratio {(IR^\prime) = \frac{E[r]}{\ES} } to be the
+ratio of Expected Return to Expected Shortfall. For distributions that are characterized by
+a scale parameter, the Expected Shortfall will be a constant multiple of the standard
+deviation, and the Modified Information Ratio is proportional to the Information Ratio, so
+that the constant cancels out from the numerator and denominator and leaves the risk budgets
+unchnaged.
+{(IR^\prime) = \frac{E[r]}{ES} = IR \cdot frac{{\sigma} {ES}} = frac{IR}{frac{{ES} {\sigma} }}}.
+We call {frac{{ES} {\sigma} }} the Tail Risk Ratio. we want to bias our risk budgets away
+from #' strategies or securiites with high tail risk ratios, and towards startegies and
+securities with #' low tail risk ratios. We therefore make an ad-hoc substitution and
+rewrite the expression for the risk budgets as follows:
+
+{\vec{\sigma} = \frac{{C}^{-1}}}{\sqrt{(IR^\prime)^T {C}^{-1} IR^\prime}}\cdot \sigma_{Target}
+
+in some risk budgeing applications, the various strategies / securities are only weakly
+correlated, and in these cases, the solution can be made even more robust by averaging the
+off-diagonal entries in the correlation matrix, so that
+
+{\vec{\sigma} = \frac{\bar{C}^{-1}}}{\sqrt{(IR^\prime)^T \bar{C}^{-1} IR^\prime}}\cdot \sigma_{Target}
+
+This simple closed form solution with the inclusion of tail risk and with a stabilized
+correlation matrix, hardly ever results in negative solutions, and there is no need in
+practice to include a long-only constraint - we just round up to 0 on the few occasions when
+a risk budget appears. However,in the general case,if we want to bound \sigma_i between
+\sigma_i^U and \sigma_i^L, we either have to solve a full mean-variance optimization
+(and have to ignore  tail risk) or create a simulation based or historical optimization.
+Instead, we can approximate the problem using an iterative scheme that implements a
+heuristic for addiing to or subracting from all risk budgets in a way that allows
+the process to convergence in just one or two iterations
 }
 \details{
-(TBA)
+This function starts by computing an unconstrained meean variance optimmal portfolio in
+which the risk budgets are expressed as a function of the various information ratios
+(Information Ratio = Excess Return / Volatility (Excess Return) ). This can be solved in closed form.
+We then replace each Information Ratio with its corresponding Modified Information Ratio
+(Modified Information Ratio = Excess Return / Expected Shortfall (Excess Return) ).
+In the special case when all the returns are drawn from the same scale family (e.g. Gaussian),
+ES is just a constant multiple of \sigma, and the solution is unchanged. But if some strategies have
+a higher level of tail risk relative to others, their risk budget will decline. In effect, risk
+is allocated away from strategies with high tail risk and to strategies with low tail risk.
 }
 \examples{
 data("RussellData")
@@ -63,7 +134,7 @@ robRiskData = RussellData[, 1:15]
 riskBudget = robRiskBudget(robRiskData, rf = rf, shrink = TRUE, avgCor = TRUE,
 ESMethod = "historical", corMatMethod = "mcd")
 robRiskBudget(robRiskData, shrink = TRUE, corMatMethod = "pairwiseQC", avgCor = FALSE)
-robRiskBudget(robRiskData, shrink = TRUE, corMatMethod = "mcd", avgCor = TRUE)
+robRiskBudget(robRiskData, shrink = TRUE, corMatMethod = "mcd", avgCor = TRUE, upper = 0.0123)
 
 }
 \references{
