@@ -81,8 +81,8 @@
 ############################< MAIN CODE >###############################
 
 cusumActMgr <- function(portfolioName, benchmarkName, data, upperIR = 0.5,
-                      lowerIR = 0, lambda_in = 0.10, lambda_out = 0.20,
-                      winsorize = 4, filterStd = FALSE) {
+                        lowerIR = 0, lambda_in = 0.10, lambda_out = 0.20,
+                        winsorize = 4, filterStd = FALSE) {
 
   # record the call as an element to be returned
   this.call <- match.call()
