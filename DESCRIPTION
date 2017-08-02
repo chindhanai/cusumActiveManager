@@ -13,16 +13,16 @@ Encoding: UTF-8
 Depends:
     R (>= 3.0.0),
     xts (>= 0.9),
-    lattice (>= 0.20)
-Imports:
+    lattice (>= 0.20),
     PerformanceAnalytics(>= 1.4),
+    robust
+Imports:
     quantmod,
     lattice,
     zoo,
     corrplot,
     robustbase,
-    robust,
-    MASS,
+    MASS
 LazyData: true
 Roxygen: list(wrap = FALSE)
 RoxygenNote: 6.0.1
