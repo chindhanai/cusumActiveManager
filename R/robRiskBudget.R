@@ -2,7 +2,7 @@
 #'
 #' @description This function starts by computing an unconstrained mean variance optimmal portfolio in
 #' which the risk budgets are expressed as a function of the various information ratios
-#' (Information Ratio = Excess Return / Volatility (Excess Return) ). This can be solved in closed form.
+#' (Information Ratio = Excess Return / Volatility (Excess Return)). This can be solved in closed form.
 #' We then replace each Information Ratio with its corresponding Modified Information Ratio
 #' (Modified Information Ratio = Excess Return / Expected Shortfall (Excess Return) ).
 #' In the special case when all the returns are drawn from the same scale family (e.g. Gaussian),
