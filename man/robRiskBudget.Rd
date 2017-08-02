@@ -133,7 +133,7 @@ robRiskData = RussellData[, 1:15]
 
 riskBudget = robRiskBudget(robRiskData, rf = rf, shrink = TRUE, avgCor = TRUE,
 ESMethod = "historical", corMatMethod = "mcd")
-robRiskBudget(robRiskData, shrink = TRUE, corMatMethod = "pairwiseQC", avgCor = FALSE)
+robRiskBudget(robRiskData, shrink = TRUE, corMatMethod = "pairwiseQC", avgCor = TRUE)
 robRiskBudget(robRiskData, shrink = TRUE, corMatMethod = "mcd", avgCor = TRUE, upper = 0.0123)
 
 }
