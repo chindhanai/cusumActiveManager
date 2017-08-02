@@ -66,16 +66,64 @@ to the average of all its off-diagonal elements}
 \item{IR}{The shrunk average IRs or the user supplied IRs}
 \item{modIR}{The vector of modified IRs}
 }
-\details{
-This function starts by computing an unconstrained meean variance optimmal portfolio in
+\description{
+This function starts by computing an unconstrained mean variance optimmal portfolio in
 which the risk budgets are expressed as a function of the various information ratios
 (Information Ratio = Excess Return / Volatility (Excess Return) ). This can be solved in closed form.
 We then replace each Information Ratio with its corresponding Modified Information Ratio
 (Modified Information Ratio = Excess Return / Expected Shortfall (Excess Return) ).
 In the special case when all the returns are drawn from the same scale family (e.g. Gaussian),
-ES is just a constant multiple of \deqn{\sigma}, and the solution is unchanged. But if some strategies have
+ES is just a constant multiple of \eqn{\sigma}, and the solution is unchanged. But if some strategies have
 a higher level of tail risk relative to others, their risk budget will decline. In effect, risk
 is allocated away from strategies with high tail risk and to strategies with low tail risk.
+}
+\details{
+This function implements the Philips and Liu method to compute an optimal set of
+risk budgets that acheive a targeted level of volatility, but with lower expected shortfall.
+It works best with weakly correlated strategies, as one might find in absolute return
+portfolios, and takes into account both the volatility and the tail risk of strategies to
+create a portfolio with a targeted level of volatility but with a lower level of tail risk.
+
+In the absence of any constraints, mean-variance risk budgets are given by
+\deqn{\vec{\sigma} = \frac{C^{-1}}{\sqrt{IR^T C^{-1} IR}} \cdot \sigma_{Target}}
+where IR is the Information Ratio: \deqn{IR = \frac{E[r]}{\sigma}} and C is the correlation
+(not covariance) matrix. In general, it is extremely hard to allocate Expected Shortfall
+between strategies (or securities) in a way that achievees a target level of Expected
+Shortfall for the portfolio. This algorithm finds a pragmatic middle way - it allocates
+risk using volatility as the measure of risk, but uses Expected Shortfall to guide its
+allocations.
+
+To do so, we start with the observation that Information Ratio is the ratio of return to
+risk, and define tne Modified Information Ratio \eqn{(IR^\prime) = \frac{E[r]}{ES} } to be the
+ratio of Expected Return to Expected Shortfall. For distributions that are characterized by
+a scale parameter, the Expected Shortfall will be a constant multiple of the standard
+deviation, and the Modified Information Ratio is proportional to the Information Ratio, so
+that the constant cancels out from the numerator and denominator and leaves the risk budgets
+unchanged.
+
+\eqn{(IR^\prime) = \frac{E[r]}{ES} = IR \cdot \frac{\sigma}{ES} = \frac{IR}{ES / \sigma}}.
+We call \deqn{\frac{ES}{\sigma}} the Tail Risk Ratio. we want to bias our risk budgets away
+from strategies or securiites with high tail risk ratios, and towards startegies and
+securities with low tail risk ratios. We therefore make an ad-hoc substitution and
+rewrite the expression for the risk budgets as follows:
+
+\deqn{\vec{\sigma} = \frac{C^{-1}}{\sqrt{(IR^\prime)^T {C}^{-1} IR^\prime}} \cdot \sigma_{Target}}
+
+in some risk budgeing applications, the various strategies / securities are only weakly
+correlated, and in these cases, the solution can be made even more robust by averaging the
+off-diagonal entries in the correlation matrix, so that
+
+\deqn{\vec{\sigma} = \frac{\bar{C}^{-1}}{\sqrt{(IR^\prime)^T \bar{C}^{-1} IR^\prime}} \cdot \sigma_{Target}}
+
+This simple closed form solution with the inclusion of tail risk and with a stabilized
+correlation matrix, hardly ever results in negative solutions, and there is no need in
+practice to include a long-only constraint - we just round up to 0 on the few occasions when
+a risk budget appears. However,in the general case,if we want to bound \deqn{\sigma_i} between
+\deqn{\sigma_i^U} and \deqn{\sigma_i^L}, we either have to solve a full mean-variance optimization
+(and have to ignore  tail risk) or create a simulation based or historical optimization.
+Instead, we can approximate the problem using an iterative scheme that implements a
+heuristic for addiing to or subracting from all risk budgets in a way that allows
+the process to convergence in just one or two iterations
 }
 \examples{
 data("RussellData")
