@@ -9,7 +9,7 @@
 #' @importFrom lattice barchart
 #' @importFrom MASS rlm
 #'
-#' @param object An object of class cusumActMgr returned by cusumActMgr.
+#' @param object An object of class \code{cusumActMgr} returned by \code{cusumActMgr}.
 #' @param digits The number of digits of numerical values in graphs
 #' @param which A number or a vector of numbers to indicate the type of plots.
 #' If a subset of the plots is required, specify a subset of the numbers 1 and 2
