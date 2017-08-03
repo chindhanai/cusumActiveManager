@@ -69,7 +69,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                                      text = list("12 Month Moving Average"),
                                      cex = 0.8))
                # 2: Plot of IR
-               P2 = xyplot(obj2, main="Monthly Estimate of Annualized IR",
+               P2 = xyplot(obj2, main="Monthly Estimate: Annualized IR",
                            col=4, las=1, horizontal = FALSE, type = c('h', 'g'),
                            ylab = "IR", lwd = 1.75,
                            scales = list(y = list(rot = 0), axs='i', x = list(tick.number = 15)),
@@ -150,7 +150,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                thresholds = c("24 | 16", "36 | 22", "48 | 27",
                               "60 | 32", "72 | 37","84 | 41")
                # 3: Lindley's Recursion
-               P3 = xyplot(obj3, main="Page's Procedure: Likelihood Ratio Test",
+               P3 = xyplot(obj3, main="Page's Procedure: LR Test",
                            col=4, scales = list(y = list(rot = 0), axs = 'i'),
                            panel=function(x,y,...){
                             panel.xyplot(x,y,...)
@@ -172,7 +172,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                Alpha = round(Rob_lm$coefficients[1], 3)
                Beta = round(Rob_lm$coefficients[2], 3)
                P4 = xyplot(portRet ~ benchRet, pch = 16, col = 4,
-                          main = "Portfolio Returns vs. Benchmark Returns",
+                          main = "Portfolio vs. Benchmark",
                           xlab = "Benchmark Returns (%)",
                           ylab = "Portfolio Returns (%)",
                           scales = list(y = list(rot = 0)),
