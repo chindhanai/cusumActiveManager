@@ -3,6 +3,7 @@
 S3method(print,summary.cusumActMgr)
 S3method(summary,cusumActMgr)
 export(chartCusum)
+export(chartRobRisk)
 export(cusumActMgr)
 export(robRiskBudget)
 export(simulateARL)

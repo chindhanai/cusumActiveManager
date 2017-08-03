@@ -7,7 +7,7 @@
 chartCusum(object, digits = 3, which = NULL, ...)
 }
 \arguments{
-\item{object}{An object of class cusumActMgr returned by cusumActMgr.}
+\item{object}{An object of class \code{cusumActMgr} returned by \code{cusumActMgr}.}
 
 \item{digits}{The number of digits of numerical values in graphs}
 
