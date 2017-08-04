@@ -146,7 +146,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
 
                horiz = c(-3.41, -4.33, -5.08, -5.72, -6.29, -6.81)
                colors2 = c(3, "green3", 7, "goldenrod1", "orangered", 2)
-               ycoor = c(-3.2, -4.1, -4.8, -5.5, -6.1, -6.6)
+               ycoor = horiz + 0.2
                thresholds = c("24 | 16", "36 | 22", "48 | 27",
                               "60 | 32", "72 | 37","84 | 41")
                # 3: Lindley's Recursion
@@ -158,7 +158,7 @@ chartCusum <- function(object, digits = 3, which = NULL, ...) {
                               panel.abline(h = horiz[i], col=colors2[i], lwd=2)
                             }
                             panel.abline(h = 0, col = 4, lty = 3)
-                            panel.text(as.yearmon('2006-03', "%Y-%m"), y = -1.7, "Avg. Crossing Time", cex = 0.65)
+                            panel.text(as.yearmon('2006-11', "%Y-%m"), y = -1.7, "Avg. Crossing Time", cex = 0.65)
                             panel.text(as.yearmon('2006-03', "%Y-%m"), y = -2.2, "IR = 0.5 | IR = 0", cex = 0.65)
                             for (i in 1:length(ycoor)) {
                               panel.text(as.yearmon('2006-03', "%Y-%m"), y = ycoor[i], thresholds[i], cex = 0.65)

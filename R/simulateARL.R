@@ -6,12 +6,13 @@
 #' @details
 #'
 #'
-#' @param mu A numeric value representing the information ratio we want to
+#' @param mu A numeric value that determines the information ratio we want to
 #' simulate thresholds for. No default value is set.
-#' @param Threshold A numeric value representing the threshold for the Lindley's
+#' @param Threshold A numeric value that determines the threshold for the Lindley's
 #' recursion to be updated in the recursion. No default value is set.
+#' @param k A numeric value that determines the level of cut-off. Default is 3.
 #' @param delta A numeric value representing the simulation accuracy.
-#' In other words, we will simulate until 3 * sigma / mu < precision.
+#' In other words, we will simulate until k * sigma / mu < precision.
 #' @param EW_constant A numeric value representing the ratio between the former sigma
 #' and the new sigma. The default is set to 0.9
 #' @param Fixed_Sigma The logical value representing if the sigma should be constant of not.
@@ -29,22 +30,21 @@
 #' Fall 2003, pp. 86-94.
 #'
 #' @examples
-#' M = 100
 #' Lower_Threshold = 1.00
 #' Upper_Threshold = 11.0
 #' #Monthly mu's for monthly sigma=1, annualized IR = +0.5, 0
 #' mu = c(0.5, 0) / sqrt(12)
-#' Seq_M = 0:M
-#' Thresholds = Lower_Threshold + Seq_M * (Upper_Threshold - Lower_Threshold) / M
-#' Threshold_upper = sapply(Thresholds, FUN = simulateARL, mu = mu[1], delta = 0.1)
-#' Threshold_lower = sapply(Thresholds, FUN = simulateARL, mu = mu[2], delta = 0.1)
+#' Seq_M = 20:70
+#' Thresholds = Lower_Threshold + Seq_M * (Upper_Threshold - Lower_Threshold) / 100
+#' Threshold_upper = sapply(Thresholds, FUN = simulateARL, mu = mu[1], delta = 0.01)
+#' Threshold_lower = sapply(Thresholds, FUN = simulateARL, mu = mu[2], delta = 0.01)
 #'
 #' @export
 
 ############################< MAIN CODE >###############################
 # This function simulates the threshold for Lindley's recursion
 
-simulateARL = function(mu, Threshold, delta, EW_constant = 0.9, Fixed_Sigma = 1){
+simulateARL = function(mu, Threshold, delta, k = 3, EW_constant = 0.9, Fixed_Sigma = 1){
   N_Events          = 0
   Sum               = 0
   SumSq             = 0
@@ -80,8 +80,7 @@ simulateARL = function(mu, Threshold, delta, EW_constant = 0.9, Fixed_Sigma = 1)
     ARL <- Sum / N_Events
 
     Sigma = ifelse(N_Events < 10, 100000, sqrt( (SumSq - Sum^2 / N_Events) / (N_Events * (N_Events - 1))) )
-    ThreeSigmaOverMu = 3 * Sigma / ARL
-    print(ThreeSigmaOverMu)
+    ThreeSigmaOverMu = k * Sigma / ARL
   }
 
   #Std. deviation of the ARLs
