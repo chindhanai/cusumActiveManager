@@ -43,8 +43,8 @@
 #' @param corMatMethod the method used to estimate the robust correlation matrix,
 #' (the methods are available in library robust, and the default is "auto")
 #' @param targetVol The target volatility
-#' @param shrink Logical value that determines whether or not we want to shrink the expected returns toward their grand mean
-#' Uses James-Stein shrinkage, but is applicable only when expected returns are estimated by averaging historical returns,
+#' @param shrink Logical value that determines whether or not we want to shrink the IRs toward their grand mean.
+#' using James-Stein shrinkage.
 #' @param avgCor Logical value that determines if we want to set each off-diagonal element in the correlation matrix
 #' to the average of all its off-diagonal elements
 #' @param p User-specified confidence level for computing ES
@@ -149,11 +149,12 @@ robRiskBudget = function(returns = NULL, rf = 0, ER = NULL, IR = NULL, TE = NULL
   # Compute the IR if IR = NULL
   if (is.null(IR)) {
 
-    # Perform means shrinkage
-    if (shrink == TRUE) {
+    IR = excessMu / TE
 
-      # The mean of excess mean returns used in the shrinkage
-      centeredMean = mean(excessMu)
+    # Perform IR means shrinkage
+    if (shrink == TRUE) {
+      # The mean of IRs used in the shrinkage
+      centeredIR = mean(IR)
 
       # Compute the length of observations in each asset
       n = c()
@@ -161,16 +162,10 @@ robRiskBudget = function(returns = NULL, rf = 0, ER = NULL, IR = NULL, TE = NULL
         n[i] = sum(!is.na(excessReturns[, i]))
       }
 
-      # Compute common variance across the assets
-      opt_MLE = optimize(function(var_hat) {var_hat_mle(as.vector(excessMu), as.vector(TE ^ 2), var_hat)},
-                            interval = c(0, 1e6), maximum = TRUE)
-      sigmaSq = opt_MLE$maximum
-
-      # Update the excess mean returns
-      centeredReturns = sqrt(n) * (excessMu - centeredMean)
-      excessMu = centeredMean + (1 - (k - 3) * sigmaSq / c(centeredReturns %*% centeredReturns)) * (excessMu - centeredMean)
+      # Shrink the IR and update
+      centeredReturns = sqrt(n) * (IR - centeredIR)
+      IR = centeredIR + (1 - (k - 3) / c(centeredReturns %*% centeredReturns)) * (IR - centeredIR)
     }
-    IR = excessMu / TE
   }
 
   # Compute the correlation matrix if corr = NULL
@@ -300,13 +295,3 @@ robRiskBudget = function(returns = NULL, rf = 0, ER = NULL, IR = NULL, TE = NULL
   return(results)
 }
 
-# Computes common variance across the assets
-# Used in the optimization of the common variance
-var_hat_mle <- function(R, vars, var_hat){
-  L = 1
-  for(i in 1:length(R)){
-    L = L - (((R[i] ^ 2) / vars[i]) * (vars[i] / (vars[i] + var_hat))) +
-      log(vars[i] / (vars[i] + var_hat)) / 2
-  }
-  return(L)
-}
