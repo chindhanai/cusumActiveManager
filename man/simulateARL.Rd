@@ -4,17 +4,20 @@
 \alias{simulateARL}
 \title{Simulation for thresholds of the Lindley's recursion}
 \usage{
-simulateARL(mu, Threshold, delta, EW_constant = 0.9, Fixed_Sigma = 1)
+simulateARL(mu, Threshold, delta, k = 3, EW_constant = 0.9,
+  Fixed_Sigma = 1)
 }
 \arguments{
-\item{mu}{A numeric value representing the information ratio we want to
+\item{mu}{A numeric value that determines the information ratio we want to
 simulate thresholds for. No default value is set.}
 
-\item{Threshold}{A numeric value representing the threshold for the Lindley's
+\item{Threshold}{A numeric value that determines the threshold for the Lindley's
 recursion to be updated in the recursion. No default value is set.}
 
 \item{delta}{A numeric value representing the simulation accuracy.
-In other words, we will simulate until 3 * sigma / mu < precision.}
+In other words, we will simulate until k * sigma / mu < precision.}
+
+\item{k}{A numeric value that determines the level of cut-off. Default is 3.}
 
 \item{EW_constant}{A numeric value representing the ratio between the former sigma
 and the new sigma. The default is set to 0.9}
@@ -35,15 +38,14 @@ used in the function \code{cusumActMgr}.
 
 }
 \examples{
-M = 100
 Lower_Threshold = 1.00
 Upper_Threshold = 11.0
 #Monthly mu's for monthly sigma=1, annualized IR = +0.5, 0
 mu = c(0.5, 0) / sqrt(12)
-Seq_M = 0:M
-Thresholds = Lower_Threshold + Seq_M * (Upper_Threshold - Lower_Threshold) / M
-Threshold_upper = sapply(Thresholds, FUN = simulateARL, mu = mu[1], delta = 0.1)
-Threshold_lower = sapply(Thresholds, FUN = simulateARL, mu = mu[2], delta = 0.1)
+Seq_M = 20:70
+Thresholds = Lower_Threshold + Seq_M * (Upper_Threshold - Lower_Threshold) / 100
+Threshold_upper = sapply(Thresholds, FUN = simulateARL, mu = mu[1], delta = 0.01)
+Threshold_lower = sapply(Thresholds, FUN = simulateARL, mu = mu[2], delta = 0.01)
 
 }
 \references{
